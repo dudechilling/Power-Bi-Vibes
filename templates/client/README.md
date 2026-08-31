@@ -10,6 +10,22 @@ Power BI project managed with [Power BI Vibes](https://github.com/dudechilling/P
 
 This repository should contain synthetic or explicitly approved development data only. Production operational data remains in the approved local/organizational environment unless repository storage has been explicitly authorized.
 
+## Analytical commands
+
+Power BI Vibes includes optional user-invoked analytical prompts. They are framework conventions rather than native ChatGPT slash commands.
+
+Useful commands include:
+
+- `/premature-framing` - challenge embedded solution assumptions;
+- `/data-savant` - find overlooked analytical value in the current data/model;
+- `/blind-spots` - surface consequential omissions and assumptions;
+- `/stress-test` - try to break the current design with realistic failure modes;
+- `/simplify` - identify removable or deferrable complexity;
+- `/what-next` - identify the highest-value next decision or test;
+- `/commands` - show the current command menu.
+
+You can add a target, for example `/stress-test the forecasting logic`. These commands return analysis first and do not change the project unless you subsequently ask ChatGPT to implement selected findings.
+
 ## First local setup
 
 ChatGPT can build in GitHub before the Windows machine is prepared. At the first Power BI Desktop handoff, follow the public [Windows Local Setup](https://github.com/dudechilling/Power-Bi-Vibes/blob/main/docs/WINDOWS-SETUP.md) guide.
