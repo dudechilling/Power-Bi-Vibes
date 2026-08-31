@@ -13,6 +13,8 @@ You need:
 
 You do **not** need to know DAX, TMDL, PBIR, Power Query, or Git commands before starting.
 
+Power BI Desktop project/report-format requirements change over time. Before your first local open, ChatGPT should check the current Microsoft requirements for the exact PBIP/PBIR format it created and tell you whether a particular Desktop version or preview feature must be enabled.
+
 ## 1. Create an empty private repository
 
 Create a new GitHub repository for the tool you want to build. Keep it private if it will contain organization-specific logic, terminology, synthetic fixtures based on internal schemas, or other non-public material.
@@ -39,7 +41,7 @@ My private project repository is:
 Read BOOTSTRAP.md in Power-Bi-Vibes and follow it. Do not ask me to share operational data that I am not permitted to share.
 ```
 
-ChatGPT should inspect both repositories, initialize the private project repository, and then ask what you want the tool to help you do.
+ChatGPT should inspect both repositories, ask what you want the tool to help you do, confirm Power BI is a reasonable fit, and then initialize the private project repository.
 
 ## 4. Describe the job, not the implementation
 
@@ -67,38 +69,50 @@ Correct terminology and business meaning at this stage. ChatGPT should handle te
 
 ## 7. Build and test
 
-ChatGPT writes the project to GitHub in logical, reviewable batches. For Power BI changes it should perform structural validation where possible and give you specific local QA instructions when Power BI Desktop is required.
+ChatGPT can write project files to GitHub when its connected GitHub tools have write access. Power BI structural validation and Desktop rendering require the applicable local tooling, so those checks must be reported separately.
+
+If ChatGPT cannot execute a validator or Power BI Desktop in the current environment, it should mark that check **pending** and give you one exact local action. It should never describe "file committed" as "Power BI validated."
 
 A useful QA instruction names a filter/action and the expected result. A vague instruction such as "review the dashboard" is not enough.
 
-## 8. Connect the real data locally
+## 8. Pull safely to your computer
 
-After the synthetic-data version works, point the project at the approved operational source on your computer or organizational environment.
-
-Run the production-data smoke test locally. Do not send screenshots, exports, error logs, or copied rows back to ChatGPT if they expose information you are not permitted to share.
-
-If the real source fails, report the error in a sanitized form whenever possible. ChatGPT should adjust the adapter/model rather than asking for unrestricted production records.
-
-## 9. Request changes normally
-
-Continue with ordinary-language requests. ChatGPT should translate them into technical changes, validate them, and keep the repository understandable.
-
-## Local Git commands you may be given
-
-For a new local copy:
+For a first local copy:
 
 ```powershell
 git clone <YOUR-PRIVATE-REPOSITORY-URL> C:\PBI\<PROJECT-NAME>
 ```
 
-For an existing local copy:
+If `C:\PBI` is unavailable, use a short writable path such as `%USERPROFILE%\PBI\<PROJECT-NAME>`.
+
+Before updating a copy that has been opened or saved in Power BI Desktop:
 
 ```powershell
 cd C:\PBI\<PROJECT-NAME>
+git status --short --branch
+```
+
+If the working tree is clean, use:
+
+```powershell
 git pull --ff-only
 ```
 
-Short local paths reduce Power BI project path-length problems.
+If files are modified, stop there and give the output to ChatGPT. Do not reset or overwrite the files. ChatGPT should follow the recovery workflow in `framework/GIT.md` and preserve local Desktop edits before synchronizing.
+
+## 9. Connect the real data locally
+
+After the synthetic-data version works, change the project's named source parameter/connection to the approved operational source on your computer or organizational environment. The downstream model should not require manual path rewrites.
+
+First refresh may ask for credentials or a data-source privacy level. Run the production-data smoke test locally. Do not send screenshots, exports, error logs, or copied rows back to ChatGPT if they expose information you are not permitted to share.
+
+If the real source fails, report the error in a sanitized form whenever possible. ChatGPT should adjust the adapter/model rather than asking for unrestricted production records.
+
+## 10. Request changes normally
+
+Continue with ordinary-language requests. ChatGPT should translate them into technical changes, validate them as far as the available environment allows, and keep the repository understandable.
+
+The project also maintains a small learning log for durable implementation lessons. This is not a transcript of debugging. It exists so later agent sessions do not repeat solved problems. Private project lessons are never copied automatically into the public Power BI Vibes framework.
 
 ## If something goes wrong
 
