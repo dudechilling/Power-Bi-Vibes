@@ -18,6 +18,8 @@ Maintain a portable, nontechnical-user workflow that lets ChatGPT and compatible
 8. Test scripts with representative safe fixtures before release.
 9. Keep `main` as the current working framework. Use a temporary branch for major framework experiments when needed.
 10. Never force-push or rewrite public release history after publication.
+11. Treat private-project learning as private by default. A lesson may enter the public framework only after client-specific details are removed and a human reviews both privacy and whether the lesson generalizes.
+12. Do not claim Power BI validation/rendering occurred merely because repository writes succeeded. Capability and validation state must remain explicit.
 
 ## Release check
 
@@ -25,7 +27,9 @@ Before changing `VERSION`:
 
 - check links and pinned upstream references;
 - run `scripts/inspect-source.ps1` against representative CSV/XLSX fixtures and, when available, SQLite;
-- review the bootstrap workflow for privacy regressions;
+- review the bootstrap workflow for privacy regressions and premature Power-BI-specific scaffolding;
+- confirm client templates include the current learning, source-parameter, capability, Git-recovery, and acceptance contracts;
+- reject any proposed upstream lesson that exposes client schema, terminology, URLs, paths, values, volumes, screenshots, or organization-specific details;
 - render and inspect the PDF guide;
 - confirm templates do not contain example secrets or client data;
 - summarize breaking changes in the commit/release notes.
