@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.2 - 2026-08-31
+
+Repository-integrity hardening pass.
+
+- Replaced the hand-maintained PDF layout with a reproducible `docs/build_guide.py` build from the committed Markdown guide source.
+- Added PDF preflight expectations for page count, non-empty page content, full-page rendering, renderer parity, and broad embedded-viewer compatibility.
+- Added `scripts/repo_integrity.py` plus a GitHub Actions integrity workflow to catch missing files, stale version references, broken relative links, malformed YAML, scaffold drift, and blank/truncated PDF pages.
+- Fixed the bootstrap scaffold so `.gitattributes` is actually installed and documented the exact template-to-client destination mapping.
+- Fixed PowerShell examples that previously used shell-style placeholders literally (`%USERPROFILE%`, `<YYYYMMDD-HHMM>`).
+- Made destructive Git recovery safer by separating tracked reset from an explicit `git clean -nd` preview before untracked-file deletion.
+- Updated framework migrations so private `.power-bi-vibes/learning.yml` is explicitly project-owned and preserved across upgrades.
+- Updated the client README template so learning, decisions, capability state, and safe Desktop/Git synchronization are visible project state.
+
 ## 0.1.1 - 2026-08-31
 
 External-review hardening pass.
