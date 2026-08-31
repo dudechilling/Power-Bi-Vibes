@@ -12,6 +12,16 @@ Keep source-specific cleanup close to ingestion. Common adapter responsibilities
 
 Do not silently reinterpret business meaning to make a refresh pass.
 
+## Parameterize the source boundary
+
+For file and database sources, the source location/connection must be controlled through one named Power Query parameter or a small explicit parameter set.
+
+The synthetic fixture and production source should share the same downstream adapter/model contract. Switching from synthetic to production should normally require changing the source parameter, not editing multiple M queries or rewriting downstream logic.
+
+Record the parameter name in `config/data-contract.yml`.
+
+Avoid hardcoded machine-specific absolute paths throughout queries. A relative synthetic fixture path may be used for development where Power BI can resolve it reliably, but the production location must remain externally swappable.
+
 ## Synthetic fixtures
 
 Synthetic data should test the report rather than merely fill rows.
@@ -20,8 +30,14 @@ Use a deterministic seed and create cases that exercise categories/statuses, rel
 
 Keep synthetic values obviously fictional when a realistic-looking record could be mistaken for a real person, organization, project or transaction.
 
+Choose fixture volume deliberately. A small fixture is appropriate for logic/UI testing; increase synthetic volume when cardinality or performance behavior needs pre-production testing. Do not treat a template row-count value as a universal target.
+
 ## Real-data smoke test
 
-After synthetic implementation and UI QA pass, test the real source locally for refresh success, schema compatibility, unexpected nulls/types, relationship behavior, measures and totals, performance at real volume, and source-specific edge cases absent from the fixture.
+After synthetic implementation and UI QA pass, switch the configured source parameter to the approved real source locally.
 
-Do not convert a local production smoke test into an unrestricted data-sharing requirement.
+Expect first-refresh credentials or data-source privacy prompts where the source requires them. Keep synthetic and production access paths separable and avoid unnecessarily combining sources in one query chain, which can trigger Power Query privacy/firewall behavior.
+
+Test the real source locally for refresh success, schema compatibility, unexpected nulls/types, relationship behavior, measures and totals, performance at real volume, and source-specific edge cases absent from the fixture.
+
+Do not convert a local production smoke test into an unrestricted data-sharing requirement. Sanitized error text or a safe description is sufficient when production logs/screenshots cannot be shared.
