@@ -44,7 +44,11 @@ Prefer a short writable path to reduce Power BI path-length problems:
 git clone <REPOSITORY-URL> C:\PBI\<PROJECT-NAME>
 ```
 
-If `C:\PBI` is unavailable, use a short user-owned path such as `%USERPROFILE%\PBI\<PROJECT-NAME>`.
+If `C:\PBI` is unavailable, use a short user-owned path. In PowerShell:
+
+```powershell
+git clone <REPOSITORY-URL> "$env:USERPROFILE\PBI\<PROJECT-NAME>"
+```
 
 ## Safe sync preflight
 
@@ -68,26 +72,32 @@ git pull --ff-only
 Do not pull or reset first. Preserve them in a rescue branch:
 
 ```powershell
-git switch -c local-desktop-edits-<YYYYMMDD-HHMM>
+$stamp = Get-Date -Format 'yyyyMMdd-HHmm'
+git switch -c "local-desktop-edits-$stamp"
 git add -A
 git commit -m "checkpoint: preserve local Power BI Desktop edits"
 git switch main
 git pull --ff-only
 ```
 
-Then give the agent the branch name. The agent should inspect and deliberately integrate or discard those changes.
+Then give the agent the rescue branch name. The agent should inspect and deliberately integrate or discard those changes.
 
 ### Local edits may be discarded
 
-Only after the user confirms the local edits are disposable:
+Only after the user confirms the local tracked edits are disposable:
 
 ```powershell
 git fetch origin
 git reset --hard origin/main
-git clean -fd
 ```
 
-This is destructive. Never provide it as the first response to a dirty working tree.
+Before deleting untracked files, preview them:
+
+```powershell
+git clean -nd
+```
+
+Run `git clean -fd` only if the preview contains nothing the user needs. A reset or clean is destructive and must never be the first response to a dirty working tree.
 
 ### `git pull --ff-only` refuses
 
