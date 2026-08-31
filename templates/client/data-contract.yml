@@ -1,0 +1,35 @@
+contract_version: 1
+
+source:
+  type: <xlsx|csv|sqlite|other>
+  development_representation: <synthetic|scrubbed-template|approved-real-sample|schema-only>
+  expected_location: <local parameter or relative synthetic path>
+  object: <worksheet/table/view if applicable>
+
+canonical_fields:
+  - name: <stable_internal_name>
+    source_names:
+      - <current source header>
+    type: <text|integer|decimal|date|datetime|boolean|url>
+    required: true
+    nullable: false
+    key: false
+    business_definition: <plain-language meaning>
+    display_label: <user-facing label>
+    sensitivity: <public|internal|restricted|unknown>
+    notes: null
+
+relationships: []
+
+adapter_rules:
+  allow_extra_source_fields: true
+  fail_on_missing_required_fields: true
+  trim_text: true
+  source_specific_rules: []
+
+synthetic_fixture:
+  seed: 20260831
+  target_rows: 500
+  required_cases: []
+
+known_caveats: []

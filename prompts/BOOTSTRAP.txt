@@ -1,0 +1,9 @@
+I want to build a Power BI tool.
+
+Use this framework:
+https://github.com/dudechilling/Power-Bi-Vibes
+
+My private project repository is:
+<PASTE YOUR PRIVATE GITHUB REPOSITORY URL>
+
+Read BOOTSTRAP.md in Power-Bi-Vibes and follow it. Do not ask me to share operational data that I am not permitted to share.

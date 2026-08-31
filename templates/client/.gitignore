@@ -1,0 +1,26 @@
+# Restricted/local data locations
+data/private/
+data/production/
+data/raw-production/
+
+# Secrets and environment files
+.env
+.env.*
+*.pem
+*.key
+
+# Power BI local/cache state
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+**/.pbi/unappliedChanges.json
+**/.pbi/editorSettings.json
+**/.pbi/*.abf
+
+# Binary Power BI files should not replace the PBIP source project
+*.pbix
+
+# OS/editor noise
+Thumbs.db
+.DS_Store
+.vscode/
+.idea/

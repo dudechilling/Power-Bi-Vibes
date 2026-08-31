@@ -1,3 +1,62 @@
 # Power BI Vibes
 
-Bootstrap commit. Framework files follow in the next commit.
+**Build useful Power BI tools with ChatGPT, GitHub, and privacy-safe development data.**
+
+Power BI Vibes is a public, machine-readable workflow for people who understand their work but do not need to understand DAX, TMDL, PBIR, Power Query, or Git internals.
+
+The basic pattern is:
+
+1. Create an empty **private** GitHub repository for your project.
+2. Connect GitHub to ChatGPT with permission to read and write that repository.
+3. Give ChatGPT this repository and your private project repository.
+4. Tell ChatGPT to read [`BOOTSTRAP.md`](BOOTSTRAP.md).
+5. Describe what you want the Power BI tool to help you do.
+6. Provide only data you are permitted to share. For restricted operational data, provide a scrubbed/template file or a locally generated schema report.
+7. ChatGPT builds and maintains the PBIP project in your private repository using synthetic development data.
+8. You connect the real operational source locally and perform the production-data smoke test on your own machine.
+
+## Start here
+
+For a nontechnical walkthrough, read [`START-HERE.md`](START-HERE.md) or the PDF guide in [`docs/Power-BI-Vibes-Guide.pdf`](docs/Power-BI-Vibes-Guide.pdf).
+
+### Bootstrap prompt
+
+```text
+I want to build a Power BI tool.
+
+Use this framework:
+https://github.com/dudechilling/Power-Bi-Vibes
+
+My private project repository is:
+<PASTE YOUR PRIVATE GITHUB REPOSITORY URL>
+
+Read BOOTSTRAP.md in Power-Bi-Vibes and follow it. Do not ask me to share operational data that I am not permitted to share.
+```
+
+## What this repository contains
+
+- `BOOTSTRAP.md` - the entrypoint ChatGPT follows when starting or resuming a client project.
+- `AGENTS.md` - rules for agents working on this framework itself.
+- `framework/` - durable operating rules for privacy, project structure, Git, data contracts, QA, and Microsoft Power BI skill routing.
+- `templates/` - files ChatGPT can install into a client project.
+- `scripts/inspect-source.ps1` - local metadata-only inspector for CSV, TSV, XLSX/XLSM, and SQLite sources.
+- `prompts/` - copy/paste bootstrap, resume, and update prompts.
+- `docs/` - human documentation.
+- `UPSTREAM.lock.yml` - the tested Microsoft Power BI authoring dependency and immutable commit pin.
+
+## Core boundaries
+
+- **No production operational data in this public repository.**
+- **No production operational data in client GitHub repositories unless the client explicitly permits it.**
+- Develop with deterministic synthetic data that mirrors the real schema and important edge cases.
+- Treat schema, worksheet names, formulas, internal terminology, and screenshots as potentially sensitive too.
+- Keep the client repository on `main` during normal iterative work. Use a branch for substantial experiments that could destabilize an accepted working product.
+- Validate structurally and visually before calling a Power BI change complete.
+
+## Microsoft Power BI authoring dependency
+
+Power BI Vibes currently targets Microsoft's `powerbi-authoring` plugin from `microsoft/skills-for-fabric`, pinned in [`UPSTREAM.lock.yml`](UPSTREAM.lock.yml). Power BI Vibes does not claim ownership of Microsoft's materials. See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+
+## Status
+
+`v0.1.0` is the first working framework release. It is intended to be tested against real client-style projects before a stable `1.0` release.

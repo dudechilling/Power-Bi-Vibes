@@ -1,0 +1,15 @@
+power_bi_vibes:
+  version: <POWER-BI-VIBES-VERSION>
+  source: https://github.com/dudechilling/Power-Bi-Vibes
+
+microsoft_powerbi_authoring:
+  repository: https://github.com/microsoft/skills-for-fabric
+  component_path: plugins/powerbi-authoring
+  version: <MICROSOFT-POWERBI-VERSION>
+  commit: <MICROSOFT-POWERBI-COMMIT>
+  local_materialization: null
+
+project:
+  initialized: <YYYY-MM-DD>
+  development_data_mode: synthetic
+  deviations: []

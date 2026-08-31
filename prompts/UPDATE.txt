@@ -1,0 +1,7 @@
+Check this Power BI project for a Power BI Vibes framework update:
+<PASTE YOUR PRIVATE GITHUB REPOSITORY URL>
+
+Framework source:
+https://github.com/dudechilling/Power-Bi-Vibes
+
+Read the project's .power-bi-vibes/manifest.yml and the framework's framework/UPDATES.md and CHANGELOG.md. Explain any material migration before applying it. Preserve project-specific business rules, data contracts, report specs, acceptance criteria and Power BI behavior.
