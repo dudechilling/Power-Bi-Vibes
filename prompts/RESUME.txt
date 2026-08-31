@@ -4,4 +4,4 @@ Continue work on this Power BI project:
 Use the Power BI Vibes framework:
 https://github.com/dudechilling/Power-Bi-Vibes
 
-Read the project AGENTS.md and .power-bi-vibes/manifest.yml first, inspect recent repository state, then continue from the accepted product rather than rebuilding it.
+Read the project AGENTS.md, .power-bi-vibes/manifest.yml, and confirmed entries in .power-bi-vibes/learning.yml first. Inspect recent repository state and validation capability/status, then continue from the accepted product rather than rebuilding it.
