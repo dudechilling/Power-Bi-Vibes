@@ -10,10 +10,12 @@ The basic pattern is:
 2. Connect GitHub to ChatGPT with permission to read and write that repository.
 3. Give ChatGPT this repository and your private project repository.
 4. Tell ChatGPT to read [`BOOTSTRAP.md`](BOOTSTRAP.md).
-5. Describe what you want the Power BI tool to help you do.
+5. Describe the job before ChatGPT creates a Power-BI-specific scaffold.
 6. Provide only data you are permitted to share. For restricted operational data, provide a scrubbed/template file or a locally generated schema report.
-7. ChatGPT builds and maintains the PBIP project in your private repository using synthetic development data.
-8. You connect the real operational source locally and perform the production-data smoke test on your own machine.
+7. ChatGPT creates the project in GitHub using deterministic synthetic data and a swappable source parameter.
+8. Structural validation and Power BI Desktop rendering are treated as separate checks: ChatGPT only claims them when the required local tooling actually ran.
+9. You connect the real operational source locally and perform the production-data smoke test on your own machine.
+10. The project records durable lessons so later agent sessions do not have to rediscover the same implementation knowledge.
 
 ## Start here
 
@@ -37,7 +39,7 @@ Read BOOTSTRAP.md in Power-Bi-Vibes and follow it. Do not ask me to share operat
 
 - `BOOTSTRAP.md` - the entrypoint ChatGPT follows when starting or resuming a client project.
 - `AGENTS.md` - rules for agents working on this framework itself.
-- `framework/` - durable operating rules for privacy, project structure, Git, data contracts, QA, and Microsoft Power BI skill routing.
+- `framework/` - durable operating rules for privacy, project structure, Git, data contracts, QA, learning, and Microsoft Power BI skill routing.
 - `templates/` - files ChatGPT can install into a client project.
 - `scripts/inspect-source.ps1` - local metadata-only inspector for CSV, TSV, XLSX/XLSM, and SQLite sources.
 - `prompts/` - copy/paste bootstrap, resume, and update prompts.
@@ -49,9 +51,12 @@ Read BOOTSTRAP.md in Power-Bi-Vibes and follow it. Do not ask me to share operat
 - **No production operational data in this public repository.**
 - **No production operational data in client GitHub repositories unless the client explicitly permits it.**
 - Develop with deterministic synthetic data that mirrors the real schema and important edge cases.
-- Treat schema, worksheet names, formulas, internal terminology, and screenshots as potentially sensitive too.
+- Treat schema, worksheet names, formulas, internal terminology, logs, and screenshots as potentially sensitive too.
+- Keep source locations behind a named Power Query parameter so synthetic and production sources can be swapped without rewriting downstream logic.
 - Keep the client repository on `main` during normal iterative work. Use a branch for substantial experiments that could destabilize an accepted working product.
-- Validate structurally and visually before calling a Power BI change complete.
+- Inspect local Git state before pulling over Power BI Desktop edits.
+- Validate structurally and visually before calling a Power BI change complete; mark unavailable checks as pending rather than pretending they ran.
+- Private client lessons can become public framework improvements only after abstraction, privacy review, and human approval.
 
 ## Microsoft Power BI authoring dependency
 
@@ -59,4 +64,4 @@ Power BI Vibes currently targets Microsoft's `powerbi-authoring` plugin from `mi
 
 ## Status
 
-`v0.1.0` is the first working framework release. It is intended to be tested against real client-style projects before a stable `1.0` release.
+`v0.1.1` adds the first external-review hardening pass: Power-BI-fit-before-scaffold, capability-aware validation, safe local Git synchronization, parameterized source switching, project learning, stronger QA, and version-sensitive Desktop prerequisites.
