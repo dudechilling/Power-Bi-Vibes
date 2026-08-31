@@ -3,7 +3,9 @@ contract_version: 1
 source:
   type: <xlsx|csv|sqlite|other>
   development_representation: <synthetic|scrubbed-template|approved-real-sample|schema-only>
-  expected_location: <local parameter or relative synthetic path>
+  source_parameter_name: <Power Query parameter name>
+  development_location: <relative synthetic path or approved development location>
+  production_location: <local/organizational location configured outside shared fixtures>
   object: <worksheet/table/view if applicable>
 
 canonical_fields:
@@ -28,8 +30,8 @@ adapter_rules:
   source_specific_rules: []
 
 synthetic_fixture:
-  seed: 20260831
-  target_rows: 500
+  seed: <fixed project seed>
+  target_rows: <choose for project>
   required_cases: []
 
 known_caveats: []
