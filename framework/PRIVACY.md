@@ -29,3 +29,9 @@ Use directory-based ignores and project-specific exclusions rather than assuming
 Deleting visible rows from an XLSX does not guarantee sanitization. Workbooks can retain hidden sheets, formulas, links, named ranges, metadata, caches, macros and external connections.
 
 When unsure, prefer the local metadata inspector or a purpose-built sanitized copy created in the user's approved environment.
+
+## Lesson promotion is also a privacy boundary
+
+A durable lesson learned inside a private client project can still reveal protected information through schema names, terminology, URLs, paths, values, volumes, screenshots, business rules, or distinctive implementation details.
+
+Never automatically copy project lessons into the public Power-Bi-Vibes framework. Promotion requires human review and abstraction. A promotable lesson must be expressible without revealing anything specific about the client's organization, data, operations, or internal systems.
