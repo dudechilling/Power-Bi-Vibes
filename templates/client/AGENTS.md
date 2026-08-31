@@ -12,6 +12,14 @@ Before making substantial changes:
 6. follow the Power BI Vibes framework rules from the source/version recorded in the manifest;
 7. use the pinned Microsoft Power BI authoring guidance recorded in the manifest for Power BI mechanics.
 
+## User-invoked analytical commands
+
+Power BI Vibes defines optional prompt conventions in the public framework `commands/` directory. If a user message begins with a registered trigger such as `/premature-framing`, `/data-savant`, `/blind-spots`, `/stress-test`, `/simplify`, `/what-next`, or `/commands`, read `commands/registry.yml` and the referenced command definition from the framework version recorded in `.power-bi-vibes/manifest.yml` before answering.
+
+Text after the trigger is the requested target/scope. If no target is supplied, use the current request and the smallest relevant project context.
+
+Analytical commands are non-mutating by default. Return the analysis first and wait for the user to choose what to implement. A command never overrides project privacy, Git, evidence, QA, or validation rules.
+
 ## Project defaults
 
 - Treat production operational data as restricted unless the user says otherwise.
