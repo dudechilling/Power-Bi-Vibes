@@ -13,3 +13,15 @@ project:
   initialized: <YYYY-MM-DD>
   development_data_mode: synthetic
   deviations: []
+
+capabilities:
+  github_read: <true|false|unknown>
+  github_write: <true|false|unknown>
+  local_command_execution: <true|false|unknown>
+  powerbi_desktop_control: <true|false|unknown>
+  structural_validation: pending
+  visual_validation: pending
+
+powerbi_desktop:
+  required_version: <current project requirement or null>
+  required_preview_features: []
