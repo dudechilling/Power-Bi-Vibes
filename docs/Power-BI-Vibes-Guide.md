@@ -6,9 +6,24 @@ Power BI Vibes is a workflow for building Power BI tools with ChatGPT and GitHub
 
 You explain the job and the business meaning. ChatGPT handles most repository and Power BI implementation work. Local Power BI validation is reported separately so a committed file is never mistaken for a Desktop-tested result.
 
+## First-time setup
+
+Create a private GitHub repository before starting the ChatGPT build. The recommended setup is:
+
+1. go to `https://github.com/new`;
+2. choose the correct personal/organization owner;
+3. use a short project name;
+4. select **Private**;
+5. enable **Add README** so the repository starts with a `main` branch and initial commit;
+6. create the repository and copy its URL.
+
+For the full instructions, see `docs/CREATE-PRIVATE-REPO.md` in Power BI Vibes.
+
+You do not need to install Git or Power BI Desktop before ChatGPT begins building. Local setup can wait until the first Desktop handoff.
+
 ## The workflow
 
-1. Create an empty private GitHub repository for your project.
+1. Create the private GitHub project repository.
 2. Connect GitHub to ChatGPT.
 3. Give ChatGPT the Power BI Vibes framework URL and your private project URL.
 4. Describe what you want the tool to help you do.
@@ -17,7 +32,7 @@ You explain the job and the business meaning. ChatGPT handles most repository an
 7. ChatGPT creates synthetic development data, a data contract, and a named source parameter so the real source can be connected locally without rewriting downstream logic.
 8. Approve the proposed pages/functions/business rules.
 9. ChatGPT authors the PBIP project in GitHub. Structural/Desktop checks are marked passed only when the required tooling actually ran; otherwise they remain pending local QA.
-10. Pull the project to a short local folder and open it in Power BI Desktop after confirming current PBIP/PBIR Desktop requirements.
+10. Prepare the Windows computer, authenticate local GitHub access, clone the project to a short local path, and open it in Power BI Desktop.
 11. Follow ChatGPT's specific QA checks.
 12. Connect the real operational source through the source parameter and perform the production-data smoke test locally.
 13. Continue requesting changes in ordinary language. The project keeps a small learning log so later agent sessions do not repeat solved implementation problems.
@@ -46,18 +61,47 @@ Schema, screenshots and logs can also reveal restricted information. Treat them 
 
 ChatGPT should build a fictional dataset that matches the permitted structure and deliberately covers important edge cases. The synthetic fixture is for development and QA. It does not prove that the real dataset has the same distribution, cleanliness or performance characteristics.
 
+## Prepare the Windows computer
+
+At the first Desktop handoff, the normal required local stack is:
+
+- Power BI Desktop;
+- Git for Windows;
+- PowerShell;
+- browser-based GitHub authentication for the private project repository.
+
+GitHub CLI, GitHub Desktop, Python and Visual Studio Code are not required for the normal workflow. SQLite CLI is needed only when locally inspecting a SQLite database schema.
+
+ChatGPT's GitHub connection is separate from local Git authentication. The first local HTTPS operation may open a browser through Git Credential Manager. Sign in with the GitHub account that can access the private repository and complete organization/SSO or two-factor prompts where required.
+
+Configure local Git identity once:
+
+```powershell
+git config --global user.name "Your Name"
+git config --global user.email "YOUR-GITHUB-EMAIL"
+```
+
+Every new client project includes a readiness checker. After cloning, run:
+
+```powershell
+.\scripts\check-local-setup.ps1 -RepositoryUrl https://github.com/OWNER/PROJECT.git
+```
+
+The checker reports missing dependencies and authentication/access problems without installing software or changing Git configuration. See `docs/WINDOWS-SETUP.md` in Power BI Vibes for the full setup and troubleshooting guide.
+
 ## Local Power BI testing
 
 For a first clone:
 
 ```powershell
-git clone <YOUR-PRIVATE-REPOSITORY-URL> C:\PBI\<PROJECT-NAME>
+New-Item -ItemType Directory -Path C:\PBI -Force | Out-Null
+git clone https://github.com/OWNER/PROJECT.git C:\PBI\PROJECT
+cd C:\PBI\PROJECT
 ```
 
 Before pulling newer changes into a copy that has been opened or saved in Power BI Desktop:
 
 ```powershell
-cd C:\PBI\<PROJECT-NAME>
 git status --short --branch
 ```
 
@@ -93,7 +137,7 @@ Power BI Desktop saves are treated as real source changes. The framework include
 
 ## Repository and document integrity
 
-The framework includes automated integrity checks for required files, version consistency, relative links, YAML structure, client-scaffold mappings, and the generated client PDF. The PDF is rebuilt from this Markdown source, checked for a valid page count and substantive content on every page, and rendered before the verified build is published.
+The framework includes automated integrity checks for required files, version consistency, relative links, YAML structure, client-scaffold mappings, local-setup packaging, and the generated client PDF. The PDF is rebuilt from this Markdown source, checked for a valid page count and substantive content on every page, and rendered before the verified build is published.
 
 These checks reduce silent truncation and packaging drift. They do not replace local Power BI validation of a client project.
 

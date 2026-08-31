@@ -21,6 +21,10 @@ Before making substantial changes:
 - Make descriptive checkpoint commits after validated logical batches.
 - Ask the user business questions, not avoidable implementation questions.
 - Give short, exact PowerShell/local QA steps when the user must interact with Power BI Desktop.
+- Treat ChatGPT GitHub authorization and the user's local GitHub/Git authentication as separate capability checks.
+- Defer local-machine setup until the first Desktop handoff unless a local source-inspection task requires it earlier.
+- Before first local QA, ensure `scripts/check-local-setup.ps1` exists and use it to identify missing Git, identity, repository-access, or Power BI Desktop requirements.
+- Do not require GitHub CLI, GitHub Desktop, SSH keys, Python, or other developer tooling unless the task/environment specifically needs them.
 - Inspect local Git state before telling the user to pull, reset or discard Desktop-written files.
 - Do not claim structural or visual validation ran when the current environment could not execute it; record the check as pending instead.
 - Keep file/database source locations behind the named source parameter recorded in `config/data-contract.yml`.

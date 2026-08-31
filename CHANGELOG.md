@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.3 - 2026-08-31
+
+First-time onboarding and local-readiness pass.
+
+- Added `docs/CREATE-PRIVATE-REPO.md` with click-by-click private GitHub repository creation instructions.
+- Changed the recommended new-project setup to initialize the private repository with a README so `main` and the first commit exist before ChatGPT starts writing.
+- Added `docs/WINDOWS-SETUP.md` covering Git for Windows, Git identity, HTTPS + Git Credential Manager authentication, private-repository access, short local paths, Power BI Desktop, and common failures.
+- Added `scripts/check-local-setup.ps1`, a non-installing readiness checker for Git, Git identity, Git Credential Manager, repository read access, Power BI Desktop, local workspace availability, optional SQLite CLI, and optional dry-run push access.
+- Updated the client scaffold so every new project receives `scripts/check-local-setup.ps1` for later local/Desktop handoff.
+- Made the framework explicitly distinguish ChatGPT's GitHub authorization from the user's local Windows Git/GitHub authentication.
+- Deferred local dependency setup until the first task that requires the local machine instead of making Git/Power BI installation a project-start prerequisite.
+- Clarified the minimum local stack: Power BI Desktop, Git for Windows, PowerShell and GitHub authentication. GitHub CLI, GitHub Desktop, Python, VS Code and SQLite CLI remain optional unless a specific task requires them.
+- Updated client README/agent guidance, human documentation, Git policy and integrity checks for the new onboarding contract.
+
 ## 0.1.2 - 2026-08-31
 
 Repository-integrity hardening pass.

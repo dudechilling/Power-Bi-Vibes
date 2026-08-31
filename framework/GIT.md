@@ -14,6 +14,14 @@ During normal iterative development:
 4. perform applicable visual/local QA;
 5. commit a descriptive checkpoint to `main`.
 
+## GitHub access has two separate authentication contexts
+
+ChatGPT's connected GitHub authorization and the user's local Windows Git authentication are separate.
+
+A successful ChatGPT repository write does not prove that the user's computer can clone/pull/push the repository. Before the first local Desktop handoff, use `scripts/check-local-setup.ps1` and the public `docs/WINDOWS-SETUP.md` guide to establish local Git, Git identity and GitHub access.
+
+Power BI Vibes defaults to HTTPS + Git Credential Manager on Windows. Do not require GitHub CLI, GitHub Desktop or SSH-key configuration unless the user's environment specifically needs them.
+
 ## Author of record
 
 The agent is the author of record for tracked PBIP/PBIR/TMDL/model/report files unless the user deliberately chooses to edit them in Power BI Desktop.
@@ -36,19 +44,33 @@ Use one descriptive branch for the experiment, then merge or delete it promptly.
 
 Git history is the rollback mechanism. Frequent validated checkpoint commits are more useful to this audience than permanent branch accumulation.
 
+## First local readiness check
+
+Local setup is deferred until Power BI Desktop testing is needed. From the cloned client repository, run:
+
+```powershell
+.\scripts\check-local-setup.ps1 -RepositoryUrl https://github.com/OWNER/PROJECT.git
+```
+
+The checker is read-only. It does not install software or change Git configuration. If required checks fail, give the output to the agent and fix one dependency/authentication problem at a time.
+
 ## Local clone
 
 Prefer a short writable path to reduce Power BI path-length problems:
 
 ```powershell
+New-Item -ItemType Directory -Path C:\PBI -Force | Out-Null
 git clone <REPOSITORY-URL> C:\PBI\<PROJECT-NAME>
 ```
 
 If `C:\PBI` is unavailable, use a short user-owned path. In PowerShell:
 
 ```powershell
+New-Item -ItemType Directory -Path "$env:USERPROFILE\PBI" -Force | Out-Null
 git clone <REPOSITORY-URL> "$env:USERPROFILE\PBI\<PROJECT-NAME>"
 ```
+
+On the first HTTPS operation, Git Credential Manager may open a browser sign-in. Complete GitHub account, organization/SSO and two-factor prompts as required. Do not tell the user to type their GitHub account password into an HTTPS Git password prompt.
 
 ## Safe sync preflight
 

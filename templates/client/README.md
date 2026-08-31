@@ -10,11 +10,24 @@ Power BI project managed with [Power BI Vibes](https://github.com/dudechilling/P
 
 This repository should contain synthetic or explicitly approved development data only. Production operational data remains in the approved local/organizational environment unless repository storage has been explicitly authorized.
 
+## First local setup
+
+ChatGPT can build in GitHub before the Windows machine is prepared. At the first Power BI Desktop handoff, follow the public [Windows Local Setup](https://github.com/dudechilling/Power-Bi-Vibes/blob/main/docs/WINDOWS-SETUP.md) guide.
+
+The normal local requirements are Power BI Desktop, Git for Windows, PowerShell, and GitHub authentication for this private repository. GitHub CLI and GitHub Desktop are optional.
+
+Run the included readiness check before local QA:
+
+```powershell
+.\scripts\check-local-setup.ps1 -RepositoryUrl <REPOSITORY-URL>
+```
+
 ## Local use
 
 Clone to a short Windows path such as:
 
 ```powershell
+New-Item -ItemType Directory -Path C:\PBI -Force | Out-Null
 git clone <REPOSITORY-URL> C:\PBI\<PROJECT-NAME>
 ```
 

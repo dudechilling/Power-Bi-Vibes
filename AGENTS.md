@@ -21,6 +21,8 @@ Maintain a portable, nontechnical-user workflow that lets ChatGPT and compatible
 11. Treat private-project learning as private by default. A lesson may enter the public framework only after client-specific details are removed and a human reviews both privacy and whether the lesson generalizes.
 12. Do not claim Power BI validation/rendering occurred merely because repository writes succeeded. Capability and validation state must remain explicit.
 13. Treat generated artifacts as build outputs that require independent verification. Do not assume a successful file write means a PDF, archive, or other binary is complete or portable.
+14. Treat ChatGPT GitHub authorization and local Git/GitHub authentication as separate capabilities. Do not assume one proves the other.
+15. Defer local dependency installation until a local task needs it. Keep the required client stack minimal and distinguish required from optional tools.
 
 ## Release check
 
@@ -28,14 +30,17 @@ Before changing `VERSION`:
 
 - check links and pinned upstream references;
 - run `scripts/inspect-source.ps1` against representative CSV/XLSX fixtures and, when available, SQLite;
+- syntax-check and exercise `scripts/check-local-setup.ps1` on Windows before claiming its local-detection behavior is fully verified;
 - review the bootstrap workflow for privacy regressions and premature Power-BI-specific scaffolding;
-- confirm client templates include the current learning, source-parameter, capability, Git-recovery, `.gitattributes`, and acceptance contracts;
+- confirm client templates include the current learning, source-parameter, capability, Git-recovery, `.gitattributes`, acceptance, and local-readiness contracts;
+- confirm the private-repository creation guide still matches GitHub's current repository creation workflow;
+- confirm the Windows setup guide still reflects current Git for Windows/Git Credential Manager behavior and does not require optional developer tooling without need;
 - reject any proposed upstream lesson that exposes client schema, terminology, URLs, paths, values, volumes, screenshots, or organization-specific details;
 - compare `README.md`, `START-HERE.md`, `BOOTSTRAP.md`, human guide source, templates, `VERSION`, and `CHANGELOG.md` for contradictory or stale workflow/version claims;
 - build the PDF from its committed source using `docs/build_guide.py` rather than hand-maintaining a separate layout;
 - preflight the generated PDF, confirm the expected page count, and verify every page contains substantive text or intentional visual content;
 - render every PDF page and visually inspect all pages for clipping, blank/missing pages, broken glyphs, or overflow;
-- verify the PDF in two renderers when practical (for example pdfium and pdftoppm), and normalize through Ghostscript when available for broad embedded-viewer compatibility;
+- verify the PDF in two renderers when practical and normalize through Ghostscript when available for broad embedded-viewer compatibility;
 - confirm the committed PDF's byte size/hash matches the locally verified artifact after upload;
 - confirm templates do not contain example secrets or client data;
 - summarize material changes and known unverified items in the changelog/release notes.

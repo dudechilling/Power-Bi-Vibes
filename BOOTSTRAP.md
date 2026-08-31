@@ -28,6 +28,8 @@ At minimum distinguish:
 - whether structural validation has actually been run;
 - whether rendered/visual validation has actually been run.
 
+Treat ChatGPT GitHub authorization and the user's local Windows Git/GitHub authentication as separate capabilities. A successful repository write from ChatGPT does not prove the user's computer can clone, pull or push.
+
 ChatGPT may author and commit PBIP/PBIR/TMDL files through GitHub when repository write tools are available. Do not describe a file as structurally or visually validated unless the applicable validator or Power BI Desktop check was actually executed.
 
 ## Hard boundaries
@@ -35,10 +37,11 @@ ChatGPT may author and commit PBIP/PBIR/TMDL files through GitHub when repositor
 1. **Never write client project files into the public Power-Bi-Vibes repository.**
 2. **Never request production operational data by default.** Use a scrubbed/template source, metadata-only schema report, or user-described schema when the real source is restricted.
 3. Treat schema and screenshots as potentially sensitive. Worksheet names, column names, formulas, table names, relationships, URLs, internal terminology and metadata can reveal protected information.
-4. Never commit credentials, secrets, access tokens, personal authentication material, production connection strings, or production data unless the user explicitly confirms that repository storage is permitted.
+4. Never commit credentials, secrets, access tokens, personal authentication material, production connection strings, or production data unless the user explicitly confirms repository storage is permitted.
 5. Develop and visually review with synthetic data whenever production values are restricted.
 6. A production-data smoke test can remain local. The user does not need to send sensitive screenshots or records back to the agent.
 7. Private-project lessons never write themselves into the public framework. Promotion requires abstraction and human review.
+8. Do not make the user install local development tooling at project kickoff unless the current task actually requires the local machine.
 
 ## Bootstrap sequence
 
@@ -46,8 +49,9 @@ ChatGPT may author and commit PBIP/PBIR/TMDL files through GitHub when repositor
 
 - Confirm the client repository identity from the user's message or connected GitHub context.
 - Inspect repository contents, default branch, recent commits and existing project instructions.
-- Determine whether this is a new empty project, an existing Power BI project, or a partially initialized Power-Bi-Vibes project.
+- Determine whether this is a new project, an existing Power BI project, or a partially initialized Power-Bi-Vibes project.
 - Do not overwrite an existing project blindly.
+- A repository initialized with a README is the recommended new-project state; treat that as new rather than as an existing implementation.
 
 ### 2. Read framework rules
 
@@ -79,9 +83,9 @@ Infer fit from the job. Power BI is generally appropriate for analysis, monitori
 
 If the core requirement depends on transactional writeback, multi-user record editing, complex workflow state, or application behavior that Power BI cannot reasonably provide, surface that constraint before creating the Power BI project structure. Do not force the requirement into Power BI merely because this framework is being used.
 
-### 5. Initialize an empty/new client repository
+### 5. Initialize a new client repository
 
-Once Power BI fit is established, create the following minimal structure on `main`:
+Once Power BI fit is established, create the minimal project structure on `main`:
 
 ```text
 AGENTS.md
@@ -102,9 +106,10 @@ powerbi/
 qa/
   acceptance.md
 scripts/
+  check-local-setup.ps1
 ```
 
-Use the files under `templates/client/` as the starting point. The template-to-project mapping is:
+Use these source-to-destination mappings:
 
 - `templates/client/AGENTS.md` -> `AGENTS.md`
 - `templates/client/README.md` -> `README.md`
@@ -116,13 +121,13 @@ Use the files under `templates/client/` as the starting point. The template-to-p
 - `templates/client/decisions.md` -> `_brief/decisions.md`
 - `templates/client/data-contract.yml` -> `config/data-contract.yml`
 - `templates/client/acceptance.md` -> `qa/acceptance.md`
+- `scripts/check-local-setup.ps1` -> `scripts/check-local-setup.ps1`
 
-Replace placeholders with project-specific values when known. Do not invent business definitions. Keep empty directories only when they are useful to the project; Git itself does not track empty folders.
+Replace placeholders with project-specific values when known. Do not invent business definitions. Keep empty directories only when useful; Git does not track empty folders.
 
 The project manifest must record:
 
-- installed Power-Bi-Vibes version;
-- Power-Bi-Vibes source repository;
+- installed Power-Bi-Vibes version and source repository;
 - Microsoft Power BI authoring source, version and pinned commit from `UPSTREAM.lock.yml`;
 - initialization date;
 - current development-data mode (`synthetic`, `approved-real-data`, or `mixed`);
@@ -135,7 +140,7 @@ Use the pinned Microsoft `powerbi-authoring` component defined in `UPSTREAM.lock
 
 For ChatGPT + GitHub workflows, prefer reading the required Microsoft skill/reference files directly from the immutable pinned commit rather than copying the entire third-party repository into every client project. If the execution environment requires local skill discovery, materialize the required upstream component under an agent-specific dependency path and record that location in the project manifest.
 
-Power-Bi-Vibes rules govern user interaction, privacy, repository structure, synthetic-data handling, learning, and the client Git policy. Microsoft guidance governs Power BI mechanics. Where Microsoft's generic Git guidance conflicts with `framework/GIT.md`, follow the Power-Bi-Vibes client Git policy.
+Power-Bi-Vibes rules govern user interaction, privacy, repository structure, synthetic-data handling, learning, local setup and client Git policy. Microsoft guidance governs Power BI mechanics. Where Microsoft's generic Git guidance conflicts with `framework/GIT.md`, follow the Power-Bi-Vibes client Git policy.
 
 ### 7. Acquire a safe source representation
 
@@ -152,62 +157,23 @@ Do not treat an empty workbook as automatically sanitized. Hidden sheets, metada
 
 ### 8. Create a data contract and swappable source boundary
 
-Write `config/data-contract.yml` before the model becomes complex.
+Write `config/data-contract.yml` before the model becomes complex. Capture source structure, required/optional fields, types, keys/relationships, aliases, business meaning, null handling, adapter rules, caveats, fields that must not be surfaced, and the source parameter(s) used to switch between synthetic and production locations.
 
-Capture:
+For file/database sources, do not scatter hardcoded machine paths through M queries. The synthetic-to-production transition should normally be a source-location/connection parameter change rather than a downstream rewrite.
 
-- source type and expected structure;
-- required and optional fields;
-- expected types;
-- keys and relationships;
-- aliases/mappings where source headers may change;
-- business meaning that affects calculations;
-- null/blank handling;
-- source adapter rules;
-- known caveats;
-- fields that must never be surfaced publicly;
-- the single source parameter (or small parameter set) used to switch between synthetic and production locations.
-
-For file/database sources, do not scatter hardcoded machine paths through M queries. The synthetic-to-production transition should normally be a source-location/connection parameter change rather than a rewrite of downstream transformations.
-
-Ask the user only when a semantic ambiguity affects correctness. Do not ask them to make technical decisions you can safely infer.
+Ask the user only when semantic ambiguity affects correctness.
 
 ### 9. Generate deterministic synthetic development data
 
-Create project-specific synthetic fixtures that preserve the schema and exercise the tool.
-
-Use a fixed seed and include, where plausible:
-
-- every status/category;
-- nulls and blanks;
-- boundary dates and fiscal-period transitions;
-- low, zero, negative and high numeric values when legitimate;
-- long text labels;
-- unusual but valid characters;
-- duplicates only where the real source can contain them;
-- high-cardinality dimensions;
-- valid and intentionally invalid URLs when link handling matters;
-- relationship edge cases.
+Create project-specific synthetic fixtures with a fixed seed. Exercise every important category/status, null/blank behavior, boundary dates, legitimate numeric extremes, long labels, unusual valid characters, realistic relationship edge cases, and link behavior where relevant.
 
 Never synthesize confidential real values from memory or previous client material.
 
 ### 10. Plan before large-scale authoring
 
-For a new tool, use the pinned Microsoft planning/design guidance to create `_brief/report-spec.md`. Keep the user-facing portion plain language.
+Use the pinned Microsoft planning/design guidance to create `_brief/report-spec.md`. Keep the user-facing portion plain language and cover audience/job, first-build scope, page/feature plan, important measures/business rules, navigation/interactions, accessibility, source/refresh assumptions, delivery assumptions, and unresolved business decisions.
 
-The spec should cover:
-
-- audience and job;
-- first-build scope;
-- page/feature plan;
-- important measures/business rules;
-- navigation and interactions;
-- accessibility expectations;
-- source and refresh assumptions;
-- local/service delivery assumptions;
-- open business decisions.
-
-Get user approval before a large greenfield build. Small corrective edits to an existing accepted tool do not require repeating the full planning gate.
+Get user approval before a large greenfield build. Small corrective edits to an accepted tool do not require repeating the full planning gate.
 
 ### 11. Build in logical batches
 
@@ -216,88 +182,64 @@ Typical sequence:
 1. source adapter / Power Query layer;
 2. semantic model and core measures;
 3. one usable page or workflow slice;
-4. structural validation when executable in the current environment;
+4. structural validation when executable;
 5. rendered/local QA when Power BI Desktop access is available;
 6. checkpoint commit;
 7. next page or feature.
 
-A scaffold with empty pages is not a completed report. If validation cannot run in the current environment, mark it pending and give the user the shortest exact local validation/QA step.
+A scaffold with empty pages is not a completed report. If validation cannot run in the current environment, mark it pending and give the shortest exact local validation/QA step.
 
 ### 12. Capture durable lessons
 
-Follow `framework/LEARNING.md`.
+Follow `framework/LEARNING.md`. Record durable implementation insights in `.power-bi-vibes/learning.yml` without interrupting the user. At validated checkpoints, confirm, reject or retain provisional observations. Do not turn it into a debug diary.
 
-When a durable implementation insight appears, record it in `.power-bi-vibes/learning.yml` without interrupting the user. At validated checkpoints, confirm, reject or retain provisional observations. Do not turn the file into a debug diary.
-
-If a confirmed lesson changes expected project behavior, update the applicable project-owned artifact (`AGENTS.md`, data contract, report spec, decisions, acceptance checks, or implementation) as well.
+If a confirmed lesson changes expected project behavior, update the applicable project-owned artifact as well.
 
 ### 13. Git behavior
 
-Follow `framework/GIT.md`.
+Follow `framework/GIT.md`. Keep the current usable product on `main`, make descriptive checkpoint commits after validated logical batches, use a temporary branch only for a substantial experiment/risky redesign, avoid branch proliferation, never force-push user-created history, and inspect local/remote state before pulling/reverting/discarding edits.
 
-Default client behavior:
+### 14. First local handoff and dependency setup
 
-- keep the current usable product on `main`;
-- make small, descriptive checkpoint commits after validated logical batches;
-- use a temporary branch for a substantial experiment or risky redesign of an already working product;
-- merge or abandon experimental branches promptly;
-- avoid branch proliferation;
-- never force-push or rewrite user-created history;
-- inspect local and remote repository state before pulling, reverting or discarding edits.
+Do not force local setup at project kickoff. When the first task requires Power BI Desktop or local file access:
 
-### 14. Local handoff and QA
+1. point the user to `docs/WINDOWS-SETUP.md` in Power BI Vibes if first-time setup is needed;
+2. explain that ChatGPT's GitHub connection and local GitHub authentication are separate;
+3. use Git for Windows + HTTPS + Git Credential Manager as the default Windows path;
+4. do not require GitHub CLI, GitHub Desktop, SSH keys, Python, VS Code or SQLite CLI unless the task needs them;
+5. after the client repository is cloned, have the user run:
 
-When the user must interact with Power BI Desktop, provide the shortest exact action needed.
+```powershell
+.\scripts\check-local-setup.ps1 -RepositoryUrl https://github.com/OWNER/PROJECT.git
+```
 
-Do not issue `git pull --ff-only` blindly. First have the user run the safe sync preflight from `framework/GIT.md` when local edits may exist.
+6. fix failed required checks one at a time;
+7. before the first PBIP/PBIR open, confirm current Power BI Desktop requirements for the exact project/report format.
 
-Before the first PBIP/PBIR open, confirm the current Power BI Desktop requirements for the chosen project/report format. PBIP/PBIR support and preview-feature requirements are version-dependent and must be checked against current Microsoft guidance rather than assumed from memory.
+Then give task-based QA criteria. If a screenshot is requested, remind the user to use synthetic data or ensure the screenshot is permitted to be shared.
 
-Then give task-based QA criteria. Example:
+### 15. Safe synchronization after Desktop edits
 
-> Open `powerbi/Project.pbip`. Set Fiscal Year to 2026/27. Confirm the total forecast and the project table both update. Select one project and confirm its drillthrough page shows the same project ID.
+Do not issue `git pull --ff-only` blindly after Power BI Desktop has saved the project. First run the safe sync preflight from `framework/GIT.md`. Preserve local Desktop edits before resolving divergence.
 
-If a screenshot is requested, remind the user to use synthetic data or ensure the screenshot is permitted to be shared.
+### 16. Production-data smoke test
 
-### 15. Production-data smoke test
-
-After synthetic QA passes:
-
-- switch the source parameter to the approved production location locally;
-- expect first-refresh credential/privacy prompts when the source requires them;
-- refresh;
-- verify schema compatibility;
-- verify row-level behavior, relationships and key measures;
-- test performance with realistic data volume;
-- record sanitized failures or schema differences;
-- update the adapter/contract if required.
-
-Keep synthetic and production sources separable. Avoid unnecessarily combining sources in a way that creates Power Query privacy/firewall issues. Treat credential/privacy failures as configuration problems, not as reasons to request unrestricted data.
+After synthetic QA passes, switch the source parameter to the approved production location locally, expect first-refresh credential/privacy prompts where applicable, refresh, verify schema compatibility/relationships/key measures, test performance at realistic volume, record sanitized failures, and update the adapter/contract if needed.
 
 Synthetic QA proves implementation behavior against the fixture. It does not prove production completeness or performance.
 
-### 16. Completion criteria
+### 17. Completion criteria
 
-Do not call a feature complete until the applicable checks pass:
-
-- repository state is coherent;
-- Power BI structural validation has actually passed, or is explicitly marked pending local execution;
-- pages contain real data-bound visuals/functions rather than placeholders;
-- rendered layout has actually been checked when the change affects rendering, or is explicitly marked pending local QA;
-- interactions requested by the user work;
-- acceptance steps in `qa/acceptance.md` are specific and current;
-- project documentation reflects any material source or behavior change.
+Do not call a feature complete until the applicable checks pass or are explicitly marked pending: coherent repository state, structural validation, real data-bound visuals/functions, rendered layout review, requested interactions, specific/current acceptance steps, and current project documentation.
 
 ## Communication policy
 
-Assume the user is capable in their domain and may be new to Power BI development.
-
 - Use the user's terminology.
 - Ask one consequential question at a time.
-- Infer routine technical choices and explain them only when useful.
-- Give copy/paste commands rather than tutorials when the user needs to act locally.
+- Infer routine technical choices.
+- Give copy/paste commands rather than tutorials when the user must act locally.
 - Translate errors into cause, consequence and next action.
-- Keep detailed technical diagnostics in repository files when they help future sessions.
+- Keep detailed diagnostics in repository files when useful.
 - Avoid repeated confirmation for reversible routine edits.
 - Ask before destructive, externally publishing, credential, production-data, or materially risky actions.
 
@@ -309,5 +251,5 @@ When returning to an existing project:
 2. read confirmed lessons/patterns in `.power-bi-vibes/learning.yml`;
 3. inspect recent commits and current repository state;
 4. read `_brief/report-spec.md`, `_brief/decisions.md`, `config/data-contract.yml` and `qa/acceptance.md` as relevant;
-5. compare the installed framework/upstream versions only when the user's request makes an update relevant;
-6. continue from the existing accepted product rather than rebuilding from scratch.
+5. compare framework/upstream versions only when relevant;
+6. continue from the accepted product rather than rebuilding from scratch.

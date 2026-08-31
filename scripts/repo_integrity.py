@@ -18,6 +18,8 @@ REQUIRED = [
     "THIRD_PARTY_NOTICES.md",
     "UPSTREAM.lock.yml",
     "VERSION",
+    "docs/CREATE-PRIVATE-REPO.md",
+    "docs/WINDOWS-SETUP.md",
     "docs/Power-BI-Vibes-Guide.md",
     "docs/Power-BI-Vibes-Guide.pdf",
     "docs/build_guide.py",
@@ -32,6 +34,7 @@ REQUIRED = [
     "prompts/BOOTSTRAP.txt",
     "prompts/RESUME.txt",
     "prompts/UPDATE.txt",
+    "scripts/check-local-setup.ps1",
     "scripts/inspect-source.ps1",
     "templates/client/.gitattributes",
     "templates/client/.gitignore",
@@ -76,7 +79,7 @@ def check_versions() -> None:
         return
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
-    if f"`v{version}`" not in readme and f"v{version}" not in readme:
+    if f"v{version}" not in readme:
         fail(f"README does not mention current version {version}")
     if f"## {version} -" not in changelog:
         fail(f"CHANGELOG has no section for current version {version}")
@@ -127,10 +130,35 @@ def check_scaffold_contract() -> None:
         "templates/client/decisions.md": "_brief/decisions.md",
         "templates/client/data-contract.yml": "config/data-contract.yml",
         "templates/client/acceptance.md": "qa/acceptance.md",
+        "scripts/check-local-setup.ps1": "scripts/check-local-setup.ps1",
     }
     for source, destination in mappings.items():
         if source not in bootstrap or destination not in bootstrap:
             fail(f"BOOTSTRAP missing scaffold mapping {source} -> {destination}")
+
+
+def check_local_setup_contract() -> None:
+    start = (ROOT / "START-HERE.md").read_text(encoding="utf-8")
+    windows = (ROOT / "docs/WINDOWS-SETUP.md").read_text(encoding="utf-8")
+    git_policy = (ROOT / "framework/GIT.md").read_text(encoding="utf-8")
+    client_agents = (ROOT / "templates/client/AGENTS.md").read_text(encoding="utf-8")
+    client_readme = (ROOT / "templates/client/README.md").read_text(encoding="utf-8")
+
+    for rel, text in [
+        ("START-HERE.md", start),
+        ("docs/WINDOWS-SETUP.md", windows),
+        ("framework/GIT.md", git_policy),
+        ("templates/client/AGENTS.md", client_agents),
+        ("templates/client/README.md", client_readme),
+    ]:
+        if "check-local-setup.ps1" not in text:
+            fail(f"{rel} does not reference the local readiness checker")
+
+    if "Add README" not in (ROOT / "docs/CREATE-PRIVATE-REPO.md").read_text(encoding="utf-8"):
+        fail("private-repository guide does not describe README initialization")
+
+    if "GitHub CLI" not in windows or "GitHub Desktop" not in windows:
+        fail("Windows setup guide does not distinguish optional GitHub tooling")
 
 
 def command_output(args: list[str]) -> str | None:
@@ -188,6 +216,7 @@ def main() -> int:
     check_markdown_links()
     check_yaml()
     check_scaffold_contract()
+    check_local_setup_contract()
     check_pdf()
     if failures:
         print(f"Integrity audit failed with {failures} issue(s).")
