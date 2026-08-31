@@ -87,6 +87,7 @@ Once Power BI fit is established, create the following minimal structure on `mai
 AGENTS.md
 README.md
 .gitignore
+.gitattributes
 .power-bi-vibes/
   manifest.yml
   learning.yml
@@ -103,7 +104,20 @@ qa/
 scripts/
 ```
 
-Use the files under `templates/client/` as the starting point. Replace placeholders with project-specific values when known. Do not invent business definitions.
+Use the files under `templates/client/` as the starting point. The template-to-project mapping is:
+
+- `templates/client/AGENTS.md` -> `AGENTS.md`
+- `templates/client/README.md` -> `README.md`
+- `templates/client/.gitignore` -> `.gitignore`
+- `templates/client/.gitattributes` -> `.gitattributes`
+- `templates/client/manifest.yml` -> `.power-bi-vibes/manifest.yml`
+- `templates/client/learning.yml` -> `.power-bi-vibes/learning.yml`
+- `templates/client/report-spec.md` -> `_brief/report-spec.md`
+- `templates/client/decisions.md` -> `_brief/decisions.md`
+- `templates/client/data-contract.yml` -> `config/data-contract.yml`
+- `templates/client/acceptance.md` -> `qa/acceptance.md`
+
+Replace placeholders with project-specific values when known. Do not invent business definitions. Keep empty directories only when they are useful to the project; Git itself does not track empty folders.
 
 The project manifest must record:
 
