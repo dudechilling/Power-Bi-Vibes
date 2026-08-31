@@ -31,11 +31,12 @@ You do not need to install Git or Power BI Desktop before ChatGPT begins buildin
 6. Provide a permitted source representation: approved sample, scrubbed template, metadata-only schema report, or manual schema.
 7. ChatGPT creates synthetic development data, a data contract, and a named source parameter so the real source can be connected locally without rewriting downstream logic.
 8. Approve the proposed pages/functions/business rules.
-9. ChatGPT authors the PBIP project in GitHub. Structural/Desktop checks are marked passed only when the required tooling actually ran; otherwise they remain pending local QA.
-10. Prepare the Windows computer, authenticate local GitHub access, clone the project to a short local path, and open it in Power BI Desktop.
-11. Follow ChatGPT's specific QA checks.
-12. Connect the real operational source through the source parameter and perform the production-data smoke test locally.
-13. Continue requesting changes in ordinary language. The project keeps a small learning log so later agent sessions do not repeat solved implementation problems.
+9. Use optional analytical commands when you want ChatGPT to challenge the framing, find overlooked analytical value, surface blind spots, stress-test the design, simplify it, or identify the highest-value next step.
+10. ChatGPT authors the PBIP project in GitHub. Structural/Desktop checks are marked passed only when the required tooling actually ran; otherwise they remain pending local QA.
+11. Prepare the Windows computer, authenticate local GitHub access, clone the project to a short local path, and open it in Power BI Desktop.
+12. Follow ChatGPT's specific QA checks.
+13. Connect the real operational source through the source parameter and perform the production-data smoke test locally.
+14. Continue requesting changes in ordinary language. The project keeps a small learning log so later agent sessions do not repeat solved implementation problems.
 
 ## Bootstrap prompt
 
@@ -50,6 +51,34 @@ My private project repository is:
 
 Read BOOTSTRAP.md in Power-Bi-Vibes and follow it. Do not ask me to share operational data that I am not permitted to share.
 ```
+
+## Optional analytical commands
+
+Power BI Vibes defines a small set of user-invoked prompt conventions. They are not native ChatGPT slash commands. Start your message with one of these triggers and optionally add a target:
+
+- `/commands` - show the command menu;
+- `/premature-framing` - challenge solution assumptions embedded in the current framing;
+- `/data-savant` - find overlooked analytical value that the available data can defensibly support;
+- `/blind-spots` - surface consequential assumptions, omissions, data gaps and operating risks;
+- `/stress-test` - try to break the current idea, model, report or workflow with realistic failure modes;
+- `/simplify` - identify complexity that can be removed, deferred, consolidated or automated;
+- `/what-next` - identify the highest-value next decision, test or validation step.
+
+Examples:
+
+```text
+/premature-framing
+```
+
+```text
+/stress-test the forecasting logic
+```
+
+```text
+/data-savant our current source schema
+```
+
+These commands are non-mutating by default. ChatGPT should return the analysis first and wait for you to decide what to implement.
 
 ## Restricted data
 
