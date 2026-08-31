@@ -10,9 +10,15 @@ During normal iterative development:
 
 1. inspect current repository state;
 2. make a logical batch of changes;
-3. validate the batch;
+3. validate the batch as far as the current environment allows;
 4. perform applicable visual/local QA;
 5. commit a descriptive checkpoint to `main`.
+
+## Author of record
+
+The agent is the author of record for tracked PBIP/PBIR/TMDL/model/report files unless the user deliberately chooses to edit them in Power BI Desktop.
+
+Desktop may write tracked project files when the user saves. Treat a user save as a real source-code change. Before pulling newer agent commits, inspect the local working tree so those edits are never silently lost.
 
 ## Use a branch when it earns its cost
 
@@ -30,19 +36,77 @@ Use one descriptive branch for the experiment, then merge or delete it promptly.
 
 Git history is the rollback mechanism. Frequent validated checkpoint commits are more useful to this audience than permanent branch accumulation.
 
-## Local sync commands
+## Local clone
 
-Initial clone:
+Prefer a short writable path to reduce Power BI path-length problems:
 
 ```powershell
 git clone <REPOSITORY-URL> C:\PBI\<PROJECT-NAME>
 ```
 
-Update an existing clone:
+If `C:\PBI` is unavailable, use a short user-owned path such as `%USERPROFILE%\PBI\<PROJECT-NAME>`.
+
+## Safe sync preflight
+
+Before pulling changes into a clone that has been opened or saved in Power BI Desktop, run:
 
 ```powershell
 cd C:\PBI\<PROJECT-NAME>
+git status --short --branch
+```
+
+### Clean working tree
+
+If there are no modified/untracked project files, update with:
+
+```powershell
 git pull --ff-only
 ```
 
-Prefer short local paths to reduce Power BI path-length problems.
+### Local edits must be kept
+
+Do not pull or reset first. Preserve them in a rescue branch:
+
+```powershell
+git switch -c local-desktop-edits-<YYYYMMDD-HHMM>
+git add -A
+git commit -m "checkpoint: preserve local Power BI Desktop edits"
+git switch main
+git pull --ff-only
+```
+
+Then give the agent the branch name. The agent should inspect and deliberately integrate or discard those changes.
+
+### Local edits may be discarded
+
+Only after the user confirms the local edits are disposable:
+
+```powershell
+git fetch origin
+git reset --hard origin/main
+git clean -fd
+```
+
+This is destructive. Never provide it as the first response to a dirty working tree.
+
+### `git pull --ff-only` refuses
+
+Treat this as a divergence signal rather than an instruction to force anything. Inspect:
+
+```powershell
+git status --short --branch
+git log --oneline --decorate --graph --all -20
+```
+
+Preserve any user-authored commits/edits before resolving the divergence. Do not force-push or rewrite user-created history.
+
+## Known-good checkpoints
+
+After a meaningful accepted milestone, an agent may create a descriptive annotated tag when that materially improves recovery, for example:
+
+```powershell
+git tag -a known-good-2026-08-31 -m "Accepted working checkpoint"
+git push origin known-good-2026-08-31
+```
+
+Do not create a tag after every minor edit. Normal checkpoint commits remain the primary history.
