@@ -13,10 +13,11 @@ The basic pattern is:
 5. Describe the job before ChatGPT creates a Power-BI-specific scaffold.
 6. Provide only data you are permitted to share. For restricted operational data, provide a scrubbed/template file or a locally generated schema report.
 7. ChatGPT creates the project in GitHub using deterministic synthetic data and a swappable source parameter.
-8. When local QA becomes necessary, prepare the Windows machine with Git for Windows and Power BI Desktop, authenticate local Git separately from ChatGPT, and clone the private repository.
-9. Structural validation and Power BI Desktop rendering are treated as separate checks: ChatGPT only claims them when the required tooling actually ran.
-10. You connect the real operational source locally and perform the production-data smoke test on your own machine.
-11. The project records durable lessons so later agent sessions do not have to rediscover the same implementation knowledge.
+8. Use optional Power BI Vibes analytical commands when you want to challenge framing, surface blind spots, mine the data for overlooked value, stress-test the design, simplify it, or decide what to do next.
+9. When local QA becomes necessary, prepare the Windows machine with Git for Windows and Power BI Desktop, authenticate local Git separately from ChatGPT, and clone the private repository.
+10. Structural validation and Power BI Desktop rendering are treated as separate checks: ChatGPT only claims them when the required tooling actually ran.
+11. You connect the real operational source locally and perform the production-data smoke test on your own machine.
+12. The project records durable lessons so later agent sessions do not have to rediscover the same implementation knowledge.
 
 ## Start here
 
@@ -41,11 +42,42 @@ My private project repository is:
 Read BOOTSTRAP.md in Power-Bi-Vibes and follow it. Do not ask me to share operational data that I am not permitted to share.
 ```
 
+## Analytical commands
+
+Power BI Vibes includes optional command-style prompts under [`commands/`](commands/). These are framework conventions, not native ChatGPT slash commands. Start a message with a command trigger and optionally add a target.
+
+Examples:
+
+```text
+/premature-framing
+```
+
+```text
+/stress-test the forecasting logic
+```
+
+```text
+/data-savant our current source schema
+```
+
+Available commands:
+
+- `/commands` - show the command menu.
+- `/premature-framing` - challenge embedded solution assumptions and recover the underlying problem or job.
+- `/data-savant` - identify overlooked analytical value the current data can defensibly support.
+- `/blind-spots` - surface consequential assumptions, omissions, data gaps, and operating risks.
+- `/stress-test` - try to break the current idea, model, report, or workflow with realistic failure modes.
+- `/simplify` - identify complexity that can be removed, deferred, consolidated, or automated.
+- `/what-next` - identify the highest-value next decision, test, or validation step.
+
+These commands are **non-mutating by default**. They return analysis and recommendations; ChatGPT should wait for the user to choose what to implement before changing the project. See [`commands/README.md`](commands/README.md) and [`commands/registry.yml`](commands/registry.yml).
+
 ## What this repository contains
 
 - `BOOTSTRAP.md` - the entrypoint ChatGPT follows when starting or resuming a client project.
 - `AGENTS.md` - rules for agents working on this framework itself.
 - `framework/` - durable operating rules for privacy, project structure, Git, data contracts, QA, learning, and Microsoft Power BI skill routing.
+- `commands/` - optional user-invoked analytical lenses plus a machine-readable command registry.
 - `templates/` - files ChatGPT can install into a client project.
 - `scripts/check-local-setup.ps1` - read-only Windows/Git/GitHub/Power BI readiness checker copied into client projects.
 - `scripts/inspect-source.ps1` - local metadata-only inspector for CSV, TSV, XLSX/XLSM, and SQLite sources.
@@ -69,6 +101,7 @@ Read BOOTSTRAP.md in Power-Bi-Vibes and follow it. Do not ask me to share operat
 - Treat ChatGPT GitHub authorization and the user's local GitHub authentication as separate capability checks.
 - Inspect local Git state before pulling over Power BI Desktop edits.
 - Validate structurally and visually before calling a Power BI change complete; mark unavailable checks as pending rather than pretending they ran.
+- Treat analytical commands as advisory unless the user explicitly asks to implement their findings.
 - Private client lessons can become public framework improvements only after abstraction, privacy review, and human approval.
 
 ## Local dependency policy
@@ -81,8 +114,8 @@ Power BI Vibes currently targets Microsoft's `powerbi-authoring` plugin from `mi
 
 ## Integrity checks
 
-The repository carries a CI audit that checks required files, version consistency, relative links, YAML parsing, scaffold mappings, local-setup packaging, and the generated PDF. The PDF is built from committed Markdown and checked for valid structure and substantive content on every page before release.
+The repository carries a CI audit that checks required files, version consistency, relative links, YAML parsing, scaffold mappings, command registry/definition consistency, local-setup packaging, and the generated PDF. The PDF is built from committed Markdown and checked for valid structure and substantive content on every page before release.
 
 ## Status
 
-`v0.1.3` is the first-time onboarding and local-readiness release. It adds explicit private-repository creation, separates ChatGPT GitHub access from local Git authentication, defines the minimal Windows dependency stack, adds a local readiness checker, and packages that checker into every new client project.
+`v0.1.4` adds the first user-invoked analytical command suite: framing review, data opportunity discovery, blind-spot review, stress testing, simplification, and next-step prioritization. Command definitions are non-mutating by default and dispatched through a machine-readable registry.

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.4 - 2026-08-31
+
+User-invoked analytical command pass.
+
+- Added `commands/` with a machine-readable `registry.yml` and human command menu.
+- Added `/premature-framing`, `/data-savant`, `/blind-spots`, `/stress-test`, `/simplify`, `/what-next`, and `/commands` conventions.
+- Made analytical commands non-mutating by default so they return analysis/recommendations without silently changing the project.
+- Added optional target syntax such as `/stress-test the forecasting logic` and `/data-savant our current source schema`.
+- Updated the main README to document command behavior, examples, boundaries, and discovery.
+
 ## 0.1.3 - 2026-08-31
 
 First-time onboarding and local-readiness pass.

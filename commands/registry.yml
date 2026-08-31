@@ -1,0 +1,49 @@
+commands:
+  commands:
+    trigger: /commands
+    file: README.md
+    mode: analysis
+    mutates_project: false
+    description: Show the available Power BI Vibes command menu.
+
+  premature-framing:
+    trigger: /premature-framing
+    file: premature-framing.md
+    mode: analysis
+    mutates_project: false
+    description: Challenge assumptions embedded in the current framing and recover the underlying problem or job.
+
+  data-savant:
+    trigger: /data-savant
+    file: data-savant.md
+    mode: analysis
+    mutates_project: false
+    description: Find overlooked analytical value that the current data and model can defensibly support.
+
+  blind-spots:
+    trigger: /blind-spots
+    file: blind-spots.md
+    mode: analysis
+    mutates_project: false
+    description: Identify consequential omissions, assumptions, data gaps, and operational risks.
+
+  stress-test:
+    trigger: /stress-test
+    file: stress-test.md
+    mode: analysis
+    mutates_project: false
+    description: Try to break the current idea, specification, model, report, or workflow with realistic failure modes.
+
+  simplify:
+    trigger: /simplify
+    file: simplify.md
+    mode: analysis
+    mutates_project: false
+    description: Identify complexity that can be removed, deferred, or consolidated while preserving the user's job.
+
+  what-next:
+    trigger: /what-next
+    file: what-next.md
+    mode: analysis
+    mutates_project: false
+    description: Identify the highest-value next decision, test, or validation step from current project state.
