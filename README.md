@@ -42,8 +42,11 @@ Read BOOTSTRAP.md in Power-Bi-Vibes and follow it. Do not ask me to share operat
 - `framework/` - durable operating rules for privacy, project structure, Git, data contracts, QA, learning, and Microsoft Power BI skill routing.
 - `templates/` - files ChatGPT can install into a client project.
 - `scripts/inspect-source.ps1` - local metadata-only inspector for CSV, TSV, XLSX/XLSM, and SQLite sources.
+- `scripts/repo_integrity.py` - repository/document integrity checks used by CI.
 - `prompts/` - copy/paste bootstrap, resume, and update prompts.
-- `docs/` - human documentation.
+- `docs/Power-BI-Vibes-Guide.md` - canonical human guide source.
+- `docs/build_guide.py` - reproducible PDF builder for the human guide.
+- `docs/Power-BI-Vibes-Guide.pdf` - generated client guide.
 - `UPSTREAM.lock.yml` - the tested Microsoft Power BI authoring dependency and immutable commit pin.
 
 ## Core boundaries
@@ -62,6 +65,10 @@ Read BOOTSTRAP.md in Power-Bi-Vibes and follow it. Do not ask me to share operat
 
 Power BI Vibes currently targets Microsoft's `powerbi-authoring` plugin from `microsoft/skills-for-fabric`, pinned in [`UPSTREAM.lock.yml`](UPSTREAM.lock.yml). Power BI Vibes does not claim ownership of Microsoft's materials. See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
+## Integrity checks
+
+The repository carries a CI audit that checks required files, version consistency, relative links, YAML parsing, scaffold mappings, and the generated PDF. The PDF is built from committed Markdown and checked for valid structure and substantive content on every page before release.
+
 ## Status
 
-`v0.1.1` adds the first external-review hardening pass: Power-BI-fit-before-scaffold, capability-aware validation, safe local Git synchronization, parameterized source switching, project learning, stronger QA, and version-sensitive Desktop prerequisites.
+`v0.1.2` is the repository-integrity hardening release. It makes the client guide reproducible, adds automated integrity checks, closes scaffold/migration gaps, and strengthens safe Git recovery examples before fresh-project external testing.
