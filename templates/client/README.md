@@ -22,7 +22,11 @@ Open the `.pbip` project under `powerbi/` in Power BI Desktop.
 
 ## Project state
 
-- Framework version: see `.power-bi-vibes/manifest.yml`
+- Framework/capability state: `.power-bi-vibes/manifest.yml`
+- Durable implementation lessons: `.power-bi-vibes/learning.yml`
 - Approved scope: `_brief/report-spec.md`
+- Business/implementation decisions: `_brief/decisions.md`
 - Source contract: `config/data-contract.yml`
 - QA steps: `qa/acceptance.md`
+
+Before pulling over a local copy that has been opened or saved in Power BI Desktop, inspect Git state first. Desktop saves can modify tracked project source.
