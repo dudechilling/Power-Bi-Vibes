@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   audit:
@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - name: Install system PDF tools
         run: sudo apt-get update && sudo apt-get install -y poppler-utils ghostscript
@@ -38,4 +40,30 @@ jobs:
           mkdir -p /tmp/pbv-render
           pdftoppm -png -r 120 docs/Power-BI-Vibes-Guide.pdf /tmp/pbv-render/page >/dev/null
           test "$(find /tmp/pbv-render -name 'page-*.png' | wc -l)" -ge 1
-          find /tmp/pbv-render -name 'page-*.png' -size 0 -print -quit | grep -q . && exit 1 || true
+          if find /tmp/pbv-render -name 'page-*.png' -size 0 -print -quit | grep -q .; then
+            echo "A rendered PDF page is empty on disk."
+            exit 1
+          fi
+
+      - name: Commit verified guide build when its source changed
+        if: github.event_name == 'push'
+        env:
+          BEFORE: ${{ github.event.before }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          changed="$(git diff --name-only "$BEFORE" "$HEAD_SHA" -- VERSION docs/Power-BI-Vibes-Guide.md docs/build_guide.py || true)"
+          if [ -z "$changed" ]; then
+            echo "Guide inputs unchanged; verified build will not be committed."
+            exit 0
+          fi
+
+          git add docs/Power-BI-Vibes-Guide.pdf
+          if git diff --cached --quiet; then
+            echo "Verified PDF is already current."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "docs: rebuild verified client guide [skip ci]"
+          git push
