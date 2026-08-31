@@ -1,0 +1,41 @@
+name: Integrity
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install system PDF tools
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils ghostscript
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python dependencies
+        run: python -m pip install --upgrade pip reportlab pyyaml
+
+      - name: Rebuild client guide
+        run: python docs/build_guide.py
+
+      - name: Audit repository integrity
+        run: python scripts/repo_integrity.py
+
+      - name: Render all PDF pages with Poppler
+        run: |
+          mkdir -p /tmp/pbv-render
+          pdftoppm -png -r 120 docs/Power-BI-Vibes-Guide.pdf /tmp/pbv-render/page >/dev/null
+          test "$(find /tmp/pbv-render -name 'page-*.png' | wc -l)" -ge 1
+          find /tmp/pbv-render -name 'page-*.png' -size 0 -print -quit | grep -q . && exit 1 || true
