@@ -91,6 +91,12 @@ The private project repository keeps the current usable product on `main` during
 
 Power BI Desktop saves are treated as real source changes. The framework includes a rescue-branch workflow for preserving local edits before synchronizing with newer agent commits.
 
+## Repository and document integrity
+
+The framework includes automated integrity checks for required files, version consistency, relative links, YAML structure, client-scaffold mappings, and the generated client PDF. The PDF is rebuilt from this Markdown source, checked for a valid page count and substantive content on every page, and rendered before the verified build is published.
+
+These checks reduce silent truncation and packaging drift. They do not replace local Power BI validation of a client project.
+
 ## What "done" means
 
 A feature is ready when the applicable structural check actually passed, the requested data-bound visuals/functions exist, the rendered layout was actually checked when required, the requested interactions work, and the acceptance steps are current.
