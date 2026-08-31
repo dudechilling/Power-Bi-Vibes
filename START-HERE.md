@@ -83,7 +83,11 @@ For a first local copy:
 git clone <YOUR-PRIVATE-REPOSITORY-URL> C:\PBI\<PROJECT-NAME>
 ```
 
-If `C:\PBI` is unavailable, use a short writable path such as `%USERPROFILE%\PBI\<PROJECT-NAME>`.
+If `C:\PBI` is unavailable, use a short writable user-owned path:
+
+```powershell
+git clone <YOUR-PRIVATE-REPOSITORY-URL> "$env:USERPROFILE\PBI\<PROJECT-NAME>"
+```
 
 Before updating a copy that has been opened or saved in Power BI Desktop:
 
