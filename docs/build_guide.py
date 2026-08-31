@@ -3,6 +3,8 @@
 
 Requires reportlab. If Ghostscript is available, the output is normalized through
 pdfwrite for broad PDF-renderer compatibility, including embedded web viewers.
+The layout intentionally keeps generous pagination headroom so minor ReportLab
+version differences do not create near-empty trailing pages.
 """
 from __future__ import annotations
 
@@ -45,11 +47,11 @@ def footer(canvas, doc):
     canvas.saveState()
     width, _ = letter
     canvas.setStrokeColor(RULE)
-    canvas.line(doc.leftMargin, 0.43 * inch, width - doc.rightMargin, 0.43 * inch)
+    canvas.line(doc.leftMargin, 0.40 * inch, width - doc.rightMargin, 0.40 * inch)
     canvas.setFont("Helvetica", 8)
     canvas.setFillColor(MUTED)
-    canvas.drawString(doc.leftMargin, 0.25 * inch, f"Power BI Vibes | v{VERSION}")
-    canvas.drawRightString(width - doc.rightMargin, 0.25 * inch, str(doc.page))
+    canvas.drawString(doc.leftMargin, 0.22 * inch, f"Power BI Vibes | v{VERSION}")
+    canvas.drawRightString(width - doc.rightMargin, 0.22 * inch, str(doc.page))
     canvas.restoreState()
 
 
@@ -57,30 +59,30 @@ def parse_markdown(md: str):
     styles = getSampleStyleSheet()
     title = ParagraphStyle(
         "TitlePBV", parent=styles["Title"], fontName="Helvetica-Bold",
-        fontSize=28, leading=32, alignment=TA_CENTER, textColor=colors.black,
-        spaceAfter=10,
+        fontSize=27, leading=30, alignment=TA_CENTER, textColor=colors.black,
+        spaceAfter=7,
     )
     subtitle = ParagraphStyle(
         "VersionPBV", parent=styles["Normal"], fontName="Helvetica",
-        fontSize=11, leading=14, alignment=TA_CENTER, textColor=MUTED,
-        spaceAfter=20,
+        fontSize=10.5, leading=13, alignment=TA_CENTER, textColor=MUTED,
+        spaceAfter=14,
     )
     h2 = ParagraphStyle(
         "H2PBV", parent=styles["Heading2"], fontName="Helvetica-Bold",
-        fontSize=17, leading=21, textColor=ACCENT, spaceBefore=14, spaceAfter=8,
+        fontSize=16, leading=19, textColor=ACCENT, spaceBefore=11, spaceAfter=6,
         keepWithNext=True,
     )
     body = ParagraphStyle(
         "BodyPBV", parent=styles["BodyText"], fontName="Helvetica",
-        fontSize=10.5, leading=15, textColor=TEXT, spaceAfter=8,
+        fontSize=9.8, leading=13.4, textColor=TEXT, spaceAfter=6,
     )
     code = ParagraphStyle(
-        "CodePBV", parent=styles["Code"], fontName="Courier", fontSize=8.5,
-        leading=11, leftIndent=8, rightIndent=8, borderPadding=8,
-        backColor=CODE_BG, textColor=TEXT, spaceBefore=4, spaceAfter=10,
+        "CodePBV", parent=styles["Code"], fontName="Courier", fontSize=8.2,
+        leading=10.3, leftIndent=8, rightIndent=8, borderPadding=7,
+        backColor=CODE_BG, textColor=TEXT, spaceBefore=3, spaceAfter=8,
     )
     list_body = ParagraphStyle(
-        "ListPBV", parent=body, leftIndent=0, firstLineIndent=0, spaceAfter=2,
+        "ListPBV", parent=body, leftIndent=0, firstLineIndent=0, spaceAfter=1,
     )
 
     lines = md.splitlines()
@@ -93,7 +95,7 @@ def parse_markdown(md: str):
             i += 1
             continue
         if line.startswith("# "):
-            story.append(Spacer(1, 0.18 * inch))
+            story.append(Spacer(1, 0.10 * inch))
             story.append(Paragraph(inline_markup(line[2:].strip()), title))
             story.append(Paragraph(f"Client Guide - v{VERSION}", subtitle))
             seen_title = True
@@ -116,7 +118,7 @@ def parse_markdown(md: str):
                 if not code_line:
                     wrapped.append("")
                     continue
-                pieces = textwrap.wrap(code_line, width=88, break_long_words=False, break_on_hyphens=False)
+                pieces = textwrap.wrap(code_line, width=92, break_long_words=False, break_on_hyphens=False)
                 wrapped.extend(pieces or [""])
             story.append(Preformatted("\n".join(wrapped), code))
             continue
@@ -126,14 +128,14 @@ def parse_markdown(md: str):
                 item_text = re.sub(r"^\d+\.\s+", "", lines[i]).strip()
                 items.append(ListItem(Paragraph(inline_markup(item_text), list_body)))
                 i += 1
-            story.append(ListFlowable(items, bulletType="1", leftIndent=24, bulletFontName="Helvetica", bulletFontSize=9.5, spaceAfter=8))
+            story.append(ListFlowable(items, bulletType="1", leftIndent=22, bulletFontName="Helvetica", bulletFontSize=9, spaceAfter=6))
             continue
         if line.startswith("- "):
             items = []
             while i < len(lines) and lines[i].startswith("- "):
                 items.append(ListItem(Paragraph(inline_markup(lines[i][2:].strip()), list_body)))
                 i += 1
-            story.append(ListFlowable(items, bulletType="bullet", leftIndent=24, bulletFontName="Helvetica", bulletFontSize=9, spaceAfter=8))
+            story.append(ListFlowable(items, bulletType="bullet", leftIndent=22, bulletFontName="Helvetica", bulletFontSize=8.7, spaceAfter=6))
             continue
 
         para = [line.strip()]
@@ -163,8 +165,8 @@ def build():
     md = SOURCE.read_text(encoding="utf-8")
     doc = SimpleDocTemplate(
         str(RAW), pagesize=letter,
-        leftMargin=0.72 * inch, rightMargin=0.72 * inch,
-        topMargin=0.65 * inch, bottomMargin=0.58 * inch,
+        leftMargin=0.68 * inch, rightMargin=0.68 * inch,
+        topMargin=0.56 * inch, bottomMargin=0.53 * inch,
         title="Power BI Vibes - Client Guide", author="Earlhealy",
         pageCompression=0,
     )
