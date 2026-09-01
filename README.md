@@ -72,6 +72,16 @@ Available commands:
 
 These commands are **non-mutating by default**. They return analysis and recommendations; ChatGPT should wait for the user to choose what to implement before changing the project. See [`commands/README.md`](commands/README.md) and [`commands/registry.yml`](commands/registry.yml).
 
+## Copy/paste response convention
+
+When ChatGPT gives the user material intended to be transferred into another tool, Power BI Vibes treats copyability as part of the interface.
+
+- Prompts for another LLM, coding agent, or ChatGPT session should use fenced code blocks.
+- PowerShell, shell commands, SQL, DAX, M, code, JSON, YAML, configuration, and similar runnable or paste-ready material should use fenced code blocks with a useful language tag where appropriate.
+- Other ChatGPT response elements with strong copy/paste behavior can be used when they fit the material better.
+- Markdown blockquotes should be reserved for actual quoted material, not prompts, commands, code, or configuration the user is expected to paste elsewhere.
+- Explanatory prose should remain outside the copy/paste block unless it is intentionally part of the material to transfer.
+
 ## What this repository contains
 
 - `BOOTSTRAP.md` - the entrypoint ChatGPT follows when starting or resuming a client project.
@@ -118,4 +128,4 @@ The repository carries a CI audit that checks required files, version consistenc
 
 ## Status
 
-`v0.1.4` adds the first user-invoked analytical command suite: framing review, data opportunity discovery, blind-spot review, stress testing, simplification, and next-step prioritization. Command definitions are non-mutating by default and dispatched through a machine-readable registry.
+`v0.1.4` adds the first user-invoked analytical command suite and a copy/paste-first response convention for prompts, commands, code, and configuration. Command definitions are non-mutating by default and dispatched through a machine-readable registry.

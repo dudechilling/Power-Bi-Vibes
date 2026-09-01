@@ -238,6 +238,11 @@ Do not call a feature complete until the applicable checks pass or are explicitl
 - Ask one consequential question at a time.
 - Infer routine technical choices.
 - Give copy/paste commands rather than tutorials when the user must act locally.
+- Put prompts intended for another LLM, coding agent, or ChatGPT session in fenced code blocks.
+- Put PowerShell, shell commands, code, SQL, DAX, M, JSON, YAML, configuration, and similar runnable or paste-ready material in fenced code blocks, with a useful language tag when appropriate.
+- Prefer other response elements that provide clean copy/paste behavior when they better fit the material.
+- Do not use Markdown blockquotes for paste-ready prompts, commands, code, or configuration. Reserve blockquotes for actual quoted material.
+- Keep explanation outside copy/paste blocks unless the explanation is intentionally part of what the user should paste.
 - Translate errors into cause, consequence and next action.
 - Keep detailed diagnostics in repository files when useful.
 - Avoid repeated confirmation for reversible routine edits.

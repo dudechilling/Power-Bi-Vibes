@@ -14,6 +14,16 @@ Ask the user when:
 
 Do not ask the user to choose DAX syntax, TMDL/PBIR representation, JSON schema details, routine data-model mechanics, a chart type when the information need makes the choice clear, or Git commands the agent can perform directly.
 
+## Copy/paste-first responses
+
+When the user needs material to transfer from ChatGPT into another tool, optimize the response for direct reuse.
+
+- Put prompts intended for another LLM, coding agent, or ChatGPT session in fenced code blocks.
+- Put PowerShell, shell commands, SQL, DAX, M, code, JSON, YAML, configuration, and other runnable or paste-ready text in fenced code blocks, using an appropriate language tag when useful.
+- Prefer other ChatGPT response elements that provide clean copy/paste behavior when they are better suited to the material.
+- Do not put paste-ready prompts, commands, code, or configuration in Markdown blockquotes. Reserve blockquotes for actual quoted material.
+- Keep explanation outside the fenced block unless the explanation is intentionally part of the prompt, command sequence, or file content.
+
 ## Make the repository durable memory
 
 Important state belongs in files, not only chat history:

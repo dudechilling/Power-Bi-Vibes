@@ -2,13 +2,16 @@
 
 ## 0.1.4 - 2026-08-31
 
-User-invoked analytical command pass.
+User-invoked analytical command and response-formatting pass.
 
 - Added `commands/` with a machine-readable `registry.yml` and human command menu.
 - Added `/premature-framing`, `/data-savant`, `/blind-spots`, `/stress-test`, `/simplify`, `/what-next`, and `/commands` conventions.
 - Made analytical commands non-mutating by default so they return analysis/recommendations without silently changing the project.
 - Added optional target syntax such as `/stress-test the forecasting logic` and `/data-savant our current source schema`.
 - Updated the main README to document command behavior, examples, boundaries, and discovery.
+- Added a copy/paste-first response convention: prompts for other LLMs/agents and runnable or paste-ready PowerShell, shell, code, SQL, DAX, M, JSON, YAML, and configuration should use fenced code blocks or another copy-friendly ChatGPT surface.
+- Reserved Markdown blockquotes for actual quoted material rather than prompts, commands, code, or configuration the user is expected to reuse.
+- Propagated the response-formatting rule through `BOOTSTRAP.md`, `framework/OPERATING-RULES.md`, the client `AGENTS.md` template, and human-facing README guidance.
 
 ## 0.1.3 - 2026-08-31
 

@@ -29,6 +29,11 @@ Analytical commands are non-mutating by default. Return the analysis first and w
 - Make descriptive checkpoint commits after validated logical batches.
 - Ask the user business questions, not avoidable implementation questions.
 - Give short, exact PowerShell/local QA steps when the user must interact with Power BI Desktop.
+- Put prompts intended for another LLM, coding agent, or ChatGPT session in fenced code blocks so the user can copy/paste them cleanly.
+- Put PowerShell, shell commands, code, SQL, DAX, M, JSON, YAML, configuration, and similar runnable or paste-ready material in fenced code blocks with an appropriate language tag when useful.
+- Prefer other copy-friendly ChatGPT response elements when they suit the material better than a fenced block.
+- Do not use Markdown blockquotes for paste-ready prompts, commands, code, or configuration. Reserve blockquotes for actual quoted material.
+- Keep explanatory prose outside copy/paste blocks unless it is intentionally part of the material the user should paste.
 - Treat ChatGPT GitHub authorization and the user's local GitHub/Git authentication as separate capability checks.
 - Defer local-machine setup until the first Desktop handoff unless a local source-inspection task requires it earlier.
 - Before first local QA, ensure `scripts/check-local-setup.ps1` exists and use it to identify missing Git, identity, repository-access, or Power BI Desktop requirements.
