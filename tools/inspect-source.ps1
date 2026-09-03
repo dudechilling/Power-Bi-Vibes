@@ -7,7 +7,14 @@ param(
     [string]$OutputPath,
 
     [Parameter(Mandatory = $false)]
-    [switch]$IncludeFileName
+    [switch]$IncludeFileName,
+
+    [Parameter(Mandatory = $false)]
+    [ValidateRange(1, 1048576)]
+    [int]$HeaderRow,
+
+    [Parameter(Mandatory = $false)]
+    [string]$Delimiter
 )
 
 Set-StrictMode -Version Latest
@@ -27,14 +34,18 @@ function New-Result {
 }
 
 function Get-CsvSchema {
-    param([string]$ResolvedPath, [string]$Delimiter, [string]$SourceType)
+    param([string]$ResolvedPath, [string]$DelimiterValue, [string]$SourceType)
+
+    if ([string]::IsNullOrEmpty($DelimiterValue)) {
+        throw 'Delimiter cannot be empty.'
+    }
 
     $result = New-Result -ResolvedPath $ResolvedPath -SourceType $SourceType
     Add-Type -AssemblyName Microsoft.VisualBasic
     $parser = New-Object Microsoft.VisualBasic.FileIO.TextFieldParser($ResolvedPath)
     try {
         $parser.TextFieldType = [Microsoft.VisualBasic.FileIO.FieldType]::Delimited
-        $parser.SetDelimiters($Delimiter)
+        $parser.SetDelimiters($DelimiterValue)
         $parser.HasFieldsEnclosedInQuotes = $true
         $parser.TrimWhiteSpace = $false
         if ($parser.EndOfData) { throw 'The file is empty.' }
@@ -103,8 +114,28 @@ function Get-XlsxCellText {
     return $raw
 }
 
+function Get-XlsxRowProfile {
+    param($RowNode, [string[]]$SharedStrings, $NamespaceManager)
+
+    $texts = @()
+    $populated = 0
+    foreach ($cell in $RowNode.SelectNodes('./x:c', $NamespaceManager)) {
+        $text = Get-XlsxCellText -Cell $cell -SharedStrings $SharedStrings -NamespaceManager $NamespaceManager
+        $texts += $text
+        if (-not [string]::IsNullOrWhiteSpace($text)) {
+            $populated++
+        }
+    }
+
+    [ordered]@{
+        row = [int]$RowNode.GetAttribute('r')
+        populated = $populated
+        texts = $texts
+    }
+}
+
 function Get-XlsxSchema {
-    param([string]$ResolvedPath)
+    param([string]$ResolvedPath, [Nullable[int]]$HeaderRowOverride)
 
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     $result = New-Result -ResolvedPath $ResolvedPath -SourceType 'xlsx'
@@ -179,19 +210,50 @@ function Get-XlsxSchema {
 
             $sheetNs = New-Object System.Xml.XmlNamespaceManager($sheetXml.NameTable)
             $sheetNs.AddNamespace('x', 'http://schemas.openxmlformats.org/spreadsheetml/2006/main')
+            $rowNodes = @($sheetXml.SelectNodes('//x:sheetData/x:row', $sheetNs))
+            $profiles = @($rowNodes | ForEach-Object {
+                Get-XlsxRowProfile -RowNode $_ -SharedStrings $sharedStrings -NamespaceManager $sheetNs
+            })
 
-            $headerRow = $null
-            foreach ($rowNode in $sheetXml.SelectNodes('//x:sheetData/x:row', $sheetNs)) {
-                if ($rowNode.SelectNodes('./x:c', $sheetNs).Count -gt 0) {
-                    $headerRow = $rowNode
-                    break
+            $selected = $null
+            if ($null -ne $HeaderRowOverride) {
+                $selected = @($profiles | Where-Object { $_.row -eq $HeaderRowOverride.Value } | Select-Object -First 1)
+                if ($selected.Count -eq 0) {
+                    $result.warnings += "Worksheet '$sheetName' does not contain requested header row $($HeaderRowOverride.Value)."
+                    $selected = $null
+                }
+                else {
+                    $selected = $selected[0]
+                }
+            }
+            else {
+                $selected = @($profiles | Where-Object { $_.populated -gt 0 } | Select-Object -First 1)
+                if ($selected.Count -gt 0) {
+                    $selected = $selected[0]
+                }
+                else {
+                    $selected = $null
+                }
+
+                if ($null -ne $selected) {
+                    if ($selected.populated -le 1) {
+                        $result.warnings += "Worksheet '$sheetName' auto-selected header row $($selected.row), but it contains only $($selected.populated) populated cell. Consider -HeaderRow."
+                    }
+
+                    $laterProfiles = @($profiles | Where-Object { $_.row -gt $selected.row -and $_.populated -gt 0 } | Select-Object -First 3)
+                    if ($laterProfiles.Count -gt 0) {
+                        $largestLater = ($laterProfiles | Measure-Object -Property populated -Maximum).Maximum
+                        $suspiciousThreshold = [Math]::Max($selected.populated + 2, $selected.populated * 2)
+                        if ($largestLater -ge $suspiciousThreshold) {
+                            $result.warnings += "Worksheet '$sheetName' auto-selected header row $($selected.row) with $($selected.populated) populated cells, while a following row has $largestLater. Consider -HeaderRow."
+                        }
+                    }
                 }
             }
 
             $headers = @()
-            if ($null -ne $headerRow) {
-                foreach ($cell in $headerRow.SelectNodes('./x:c', $sheetNs)) {
-                    $text = Get-XlsxCellText -Cell $cell -SharedStrings $sharedStrings -NamespaceManager $sheetNs
+            if ($null -ne $selected) {
+                foreach ($text in $selected.texts) {
                     if ([string]::IsNullOrWhiteSpace($text)) {
                         $headers += '<blank-header>'
                     }
@@ -204,7 +266,7 @@ function Get-XlsxSchema {
             $result.structures += [ordered]@{
                 name = $sheetName
                 kind = 'worksheet'
-                header_row = $(if ($null -ne $headerRow) { [int]$headerRow.GetAttribute('r') } else { $null })
+                header_row = $(if ($null -ne $selected) { [int]$selected.row } else { $null })
                 columns = @($headers | ForEach-Object {
                     [ordered]@{ name = $_; declared_type = 'unknown' }
                 })
@@ -297,11 +359,26 @@ if (-not (Test-Path -LiteralPath $resolvedPath -PathType Leaf)) {
 }
 
 $extension = [System.IO.Path]::GetExtension($resolvedPath).ToLowerInvariant()
+$delimiterWasSpecified = $PSBoundParameters.ContainsKey('Delimiter')
+$headerRowWasSpecified = $PSBoundParameters.ContainsKey('HeaderRow')
+
 switch ($extension) {
-    '.csv' { $result = Get-CsvSchema -ResolvedPath $resolvedPath -Delimiter ',' -SourceType 'csv' }
-    '.tsv' { $result = Get-CsvSchema -ResolvedPath $resolvedPath -Delimiter "`t" -SourceType 'tsv' }
-    '.xlsx' { $result = Get-XlsxSchema -ResolvedPath $resolvedPath }
-    '.xlsm' { $result = Get-XlsxSchema -ResolvedPath $resolvedPath }
+    '.csv' {
+        $delimiterValue = $(if ($delimiterWasSpecified) { $Delimiter } else { ',' })
+        $result = Get-CsvSchema -ResolvedPath $resolvedPath -DelimiterValue $delimiterValue -SourceType 'csv'
+    }
+    '.tsv' {
+        $delimiterValue = $(if ($delimiterWasSpecified) { $Delimiter } else { "`t" })
+        $result = Get-CsvSchema -ResolvedPath $resolvedPath -DelimiterValue $delimiterValue -SourceType 'tsv'
+    }
+    '.xlsx' {
+        $headerOverride = $(if ($headerRowWasSpecified) { [Nullable[int]]$HeaderRow } else { $null })
+        $result = Get-XlsxSchema -ResolvedPath $resolvedPath -HeaderRowOverride $headerOverride
+    }
+    '.xlsm' {
+        $headerOverride = $(if ($headerRowWasSpecified) { [Nullable[int]]$HeaderRow } else { $null })
+        $result = Get-XlsxSchema -ResolvedPath $resolvedPath -HeaderRowOverride $headerOverride
+    }
     '.sqlite' { $result = Get-SqliteSchema -ResolvedPath $resolvedPath }
     '.sqlite3' { $result = Get-SqliteSchema -ResolvedPath $resolvedPath }
     '.db' { $result = Get-SqliteSchema -ResolvedPath $resolvedPath }
