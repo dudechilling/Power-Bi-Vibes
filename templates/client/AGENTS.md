@@ -9,7 +9,7 @@ Before making substantial changes:
 3. read `_brief/report-spec.md` and `_brief/decisions.md` as relevant;
 4. read `config/data-contract.yml` before changing ingestion/model assumptions;
 5. read `qa/acceptance.md` before changing accepted behavior;
-6. follow the Power BI Vibes framework rules from the source/version recorded in the manifest;
+6. follow the Power BI Vibes framework rules from the source/version recorded in the manifest, including repository hygiene, scope discipline, communication, and writing voice from `framework/OPERATING-RULES.md`;
 7. use the pinned Microsoft Power BI authoring guidance recorded in the manifest for Power BI mechanics.
 
 ## User-invoked analytical commands
@@ -18,7 +18,7 @@ Power BI Vibes defines optional prompt conventions in the public framework `comm
 
 Text after the trigger is the requested target/scope. If no target is supplied, use the current request and the smallest relevant project context.
 
-Analytical commands are non-mutating by default. Return the analysis first and wait for the user to choose what to implement. A command never overrides project privacy, Git, evidence, QA, or validation rules.
+Analytical commands are non-mutating by default. Return the analysis first and wait for the user to choose what to implement. A command never overrides project privacy, Git, evidence, QA, validation, repository hygiene, or scope rules.
 
 ## Project defaults
 
