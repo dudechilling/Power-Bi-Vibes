@@ -4,12 +4,12 @@ These instructions govern agents editing the **Power-Bi-Vibes framework reposito
 
 ## Objective
 
-Maintain a portable, nontechnical-user workflow that lets ChatGPT and compatible coding agents create and maintain Power BI PBIP projects using privacy-safe data representations.
+Maintain a portable, nontechnical-user workflow that lets ChatGPT and compatible coding agents create, understand, debug, repair, extend, and maintain Power BI PBIP projects using privacy-safe data representations.
 
 ## Framework rules
 
 1. Keep the public framework free of client operational data, private schemas, credentials, tokens, and client-specific repository URLs.
-2. Keep machine instructions and human instructions aligned. When behavior changes, update `BOOTSTRAP.md`, relevant files under `framework/`, templates, and human documentation in the same logical change.
+2. Keep machine instructions and human instructions aligned. When behavior changes, update `BOOTSTRAP.md`, relevant files under `framework/`, templates, prompts, and human documentation in the same logical change.
 3. Do not silently track Microsoft's moving `main`. Update `UPSTREAM.lock.yml` only after checking the new `powerbi-authoring` release and its relevant behavioral changes.
 4. Prefer durable principles over product-specific UI details. Put volatile setup steps in human documentation rather than core operating rules.
 5. Treat `BOOTSTRAP.md` as the canonical machine entrypoint.
@@ -21,8 +21,9 @@ Maintain a portable, nontechnical-user workflow that lets ChatGPT and compatible
 11. Treat private-project learning as private by default. A lesson may enter the public framework only after client-specific details are removed and a human reviews both privacy and whether the lesson generalizes.
 12. Do not claim Power BI validation/rendering occurred merely because repository writes succeeded. Capability and validation state must remain explicit.
 13. Treat generated artifacts as build outputs that require independent verification. Do not assume a successful file write means a PDF, archive, or other binary is complete or portable.
-14. Treat ChatGPT GitHub authorization and local Git/GitHub authentication as separate capabilities. Do not assume one proves the other.
+14. Treat ChatGPT GitHub authorization, local filesystem access, and local Git/GitHub authentication as separate capabilities. A supplied local clone path is context; do not assume the current agent can access it.
 15. Defer local dependency installation until a local task needs it. Keep the required client stack minimal and distinguish required from optional tools.
+16. Preserve the Repository Mode Gate as a mandatory pre-mutation boundary for substantive existing repositories. Optional commands may expose reconnaissance explicitly, but must not replace automatic classification.
 
 ## Release check
 
@@ -32,6 +33,10 @@ Before changing `VERSION`:
 - run `scripts/inspect-source.ps1` against representative CSV/XLSX fixtures and, when available, SQLite;
 - syntax-check and exercise `scripts/check-local-setup.ps1` on Windows before claiming its local-detection behavior is fully verified;
 - review the bootstrap workflow for privacy regressions and premature Power-BI-specific scaffolding;
+- run the repository-mode evaluation cases in `docs/REPOSITORY-MODE-EVALS.md`, including a representative foreign brownfield repository containing existing Power BI assets;
+- confirm a brownfield bootstrap performs read-only reconnaissance before mutation and does not install Power BI Vibes scaffolding merely because framework metadata is absent;
+- confirm the canonical bootstrap prompt is aligned across `prompts/BOOTSTRAP.txt`, `README.md`, `START-HERE.md`, and the human guide source, including project repository and optional local-clone context;
+- confirm a supplied local clone is not treated as proof of local filesystem access or local Git authentication;
 - confirm client templates include the current learning, source-parameter, capability, Git-recovery, `.gitattributes`, acceptance, and local-readiness contracts;
 - confirm the private-repository creation guide still matches GitHub's current repository creation workflow;
 - confirm the Windows setup guide still reflects current Git for Windows/Git Credential Manager behavior and does not require optional developer tooling without need;
