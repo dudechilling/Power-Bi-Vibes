@@ -12,7 +12,10 @@ You should have:
 
 - this Power-Bi-Vibes framework repository;
 - a user-designated client project repository;
+- the user's local clone path when one already exists and they choose to provide it;
 - GitHub write access to the client repository, or a clear alternative write path supplied by the user when mutation is actually required.
+
+A supplied local clone path is contextual information, not proof that the current agent can access that filesystem location, execute commands there, control Power BI Desktop, or use the user's local Git/GitHub authentication. Determine those capabilities separately.
 
 Repository access does not imply permission to initialize, restructure, or otherwise mutate an existing implementation. If the client repository cannot be written from the current environment, state the limitation and switch to a file/patch/local-agent handoff when the task requires changes. Do not claim changes were committed when they were not.
 
@@ -23,12 +26,14 @@ Before substantial implementation, determine what the current environment can ac
 At minimum distinguish:
 
 - repository read/write capability;
+- access to any user-supplied local clone path;
 - local command execution capability;
+- local Git/GitHub authentication capability;
 - Power BI Desktop control/reload/screenshot capability;
 - whether structural validation has actually been run;
 - whether rendered/visual validation has actually been run.
 
-Treat ChatGPT GitHub authorization and the user's local Windows Git/GitHub authentication as separate capabilities. A successful repository write from ChatGPT does not prove the user's computer can clone, pull or push.
+Treat ChatGPT GitHub authorization, local filesystem access, and the user's local Windows Git/GitHub authentication as separate capabilities. A successful repository write from ChatGPT does not prove the user's computer can clone, pull or push. A supplied local path does not prove the current agent can open or modify it.
 
 ChatGPT may author and commit PBIP/PBIR/TMDL files through GitHub when repository write tools are available and the current task authorizes mutation. Do not describe a file as structurally or visually validated unless the applicable validator or Power BI Desktop check was actually executed.
 
@@ -50,6 +55,7 @@ ChatGPT may author and commit PBIP/PBIR/TMDL files through GitHub when repositor
 ### 1. Verify target and inspect before writing
 
 - Confirm the client repository identity from the user's message or connected GitHub context.
+- Record any user-supplied local clone path as context, but do not assume it is accessible from the current environment.
 - Inspect repository contents, default branch, recent commits and existing project instructions.
 - Determine whether this is a new project, an existing Power BI project, a partially initialized Power-Bi-Vibes project, or another substantive repository containing Power BI assets.
 - Do not overwrite or reorganize an existing project blindly.
@@ -273,10 +279,12 @@ For brownfield projects, inspect and follow the repository's established Git pol
 
 ### 16. First local handoff and dependency setup
 
-Do not force local setup at project kickoff. When the first task requires Power BI Desktop or local file access:
+Do not force local setup at project kickoff. If the user supplied a local clone path, use it as the preferred local working-copy location only when the current environment can actually access it. Do not ask the user to reclone merely because the framework's default examples use another path.
+
+When the first task requires Power BI Desktop or local file access:
 
 1. point the user to `docs/WINDOWS-SETUP.md` in Power BI Vibes if first-time setup is needed;
-2. explain that ChatGPT's GitHub connection and local GitHub authentication are separate;
+2. explain that ChatGPT's GitHub connection, local filesystem access, and local GitHub authentication are separate;
 3. use Git for Windows + HTTPS + Git Credential Manager as the default Windows path;
 4. do not require GitHub CLI, GitHub Desktop, SSH keys, Python, VS Code or SQLite CLI unless the task needs them;
 5. after a Power BI Vibes-managed client repository is cloned, have the user run:
