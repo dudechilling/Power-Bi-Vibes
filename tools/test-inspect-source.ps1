@@ -88,14 +88,14 @@ function Invoke-InspectorJson {
         [Parameter(Mandatory = $true)]
         [string]$SourcePath,
         [string]$DelimiterValue,
-        [Nullable[int]]$HeaderRowValue
+        [int]$HeaderRowValue
     )
 
     if ($PSBoundParameters.ContainsKey('DelimiterValue')) {
         $raw = & $Inspector $SourcePath -Delimiter $DelimiterValue | Out-String
     }
     elseif ($PSBoundParameters.ContainsKey('HeaderRowValue')) {
-        $raw = & $Inspector $SourcePath -HeaderRow $HeaderRowValue.Value | Out-String
+        $raw = & $Inspector $SourcePath -HeaderRow $HeaderRowValue | Out-String
     }
     else {
         $raw = & $Inspector $SourcePath | Out-String

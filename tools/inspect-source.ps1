@@ -135,7 +135,7 @@ function Get-XlsxRowProfile {
 }
 
 function Get-XlsxSchema {
-    param([string]$ResolvedPath, [Nullable[int]]$HeaderRowOverride)
+    param([string]$ResolvedPath, $HeaderRowOverride)
 
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     $result = New-Result -ResolvedPath $ResolvedPath -SourceType 'xlsx'
@@ -217,9 +217,9 @@ function Get-XlsxSchema {
 
             $selected = $null
             if ($null -ne $HeaderRowOverride) {
-                $selected = @($profiles | Where-Object { $_.row -eq $HeaderRowOverride.Value } | Select-Object -First 1)
+                $selected = @($profiles | Where-Object { $_.row -eq [int]$HeaderRowOverride } | Select-Object -First 1)
                 if ($selected.Count -eq 0) {
-                    $result.warnings += "Worksheet '$sheetName' does not contain requested header row $($HeaderRowOverride.Value)."
+                    $result.warnings += "Worksheet '$sheetName' does not contain requested header row $([int]$HeaderRowOverride)."
                     $selected = $null
                 }
                 else {
@@ -372,11 +372,11 @@ switch ($extension) {
         $result = Get-CsvSchema -ResolvedPath $resolvedPath -DelimiterValue $delimiterValue -SourceType 'tsv'
     }
     '.xlsx' {
-        $headerOverride = $(if ($headerRowWasSpecified) { [Nullable[int]]$HeaderRow } else { $null })
+        $headerOverride = $(if ($headerRowWasSpecified) { [int]$HeaderRow } else { $null })
         $result = Get-XlsxSchema -ResolvedPath $resolvedPath -HeaderRowOverride $headerOverride
     }
     '.xlsm' {
-        $headerOverride = $(if ($headerRowWasSpecified) { [Nullable[int]]$HeaderRow } else { $null })
+        $headerOverride = $(if ($headerRowWasSpecified) { [int]$HeaderRow } else { $null })
         $result = Get-XlsxSchema -ResolvedPath $resolvedPath -HeaderRowOverride $headerOverride
     }
     '.sqlite' { $result = Get-SqliteSchema -ResolvedPath $resolvedPath }
