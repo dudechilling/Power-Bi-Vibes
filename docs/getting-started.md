@@ -121,9 +121,11 @@ Agent works in GitHub
         ↓
 Project files are created or changed
         ↓
-Power BI Desktop tests the result when needed
+Agent gives you a copy/paste Local QA handoff
         ↓
-You review and request the next change
+PowerShell safely pulls the changes and launches applicable local components
+        ↓
+You perform the QA checks in Power BI Desktop
 ```
 
 ## 8. Prepare Windows only when local QA is needed
@@ -140,13 +142,29 @@ Managed projects include a readiness checker:
 
 If you already supplied a usable local clone, keep using it rather than cloning a second copy.
 
-## 9. Open and test in Power BI Desktop
+## 9. Use the Local QA handoff after changes
+
+After the agent changes your project repository, its response should include a **Local QA handoff** with a copy/paste PowerShell block.
+
+The block is designed to:
+
+- go to your local clone;
+- show Git status and stop if local files have been changed;
+- pull with `git pull --ff-only` only when the worktree is clean;
+- start any project-specific local services when the repository defines how to start them;
+- launch the relevant `.pbip` or `.pbix` when Power BI Desktop QA applies and the correct entrypoint is known.
+
+It should not reset, clean, discard files, install packages, or change credentials. If you have local Power BI Desktop edits, the block should stop and show them rather than overwrite or mix them.
+
+After the block, the agent should give you the exact QA actions and expected results for the change it just made. Those checks remain pending until you actually perform them.
+
+## 10. Open and test in Power BI Desktop
 
 Before the first PBIP/PBIR open, the agent should check current Microsoft requirements for the exact format in the repository.
 
 The agent should then give task-based QA instructions: the action to perform, the expected result, and any required filter state.
 
-## 10. Pull safely after Desktop edits
+## 11. Pull safely after Desktop edits
 
 Before pulling newer changes into a local copy that has been opened or saved in Power BI Desktop:
 
@@ -162,13 +180,13 @@ git pull --ff-only
 
 If files are modified, stop and give the status output to the agent. Desktop saves can modify tracked PBIP/PBIR/TMDL files and those edits should be preserved deliberately.
 
-## 11. Connect the real data locally
+## 12. Connect the real data locally
 
 After safe/synthetic QA passes, switch the approved source connection or parameter to the operational source locally when that is how the project is designed.
 
 Run the production-data smoke test locally. Do not send screenshots, exports, logs, or copied rows back to an agent if they expose information you are not permitted to share.
 
-## 12. Continue with ordinary requests
+## 13. Continue with ordinary requests
 
 Ask for changes normally. The agent should translate them into technical work, validate as far as available tools allow, and keep durable project memory selective.
 
