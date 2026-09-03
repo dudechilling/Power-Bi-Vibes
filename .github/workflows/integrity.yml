@@ -45,6 +45,10 @@ jobs:
             exit 1
           fi
 
+      - name: Prune merged v2.09.03 branch
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: git push origin --delete v2.09.03
+
       - name: Commit verified guide build when its source changed
         if: github.event_name == 'push'
         env:
