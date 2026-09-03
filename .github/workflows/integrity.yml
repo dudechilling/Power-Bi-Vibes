@@ -30,10 +30,10 @@ jobs:
         run: python -m pip install --upgrade pip reportlab pyyaml
 
       - name: Rebuild client guide
-        run: python docs/build_guide.py
+        run: python tools/build-guide.py
 
       - name: Audit repository integrity
-        run: python scripts/repo_integrity.py
+        run: python tools/repo-integrity.py
 
       - name: Render all PDF pages with Poppler
         run: |
@@ -51,7 +51,7 @@ jobs:
           BEFORE: ${{ github.event.before }}
           HEAD_SHA: ${{ github.sha }}
         run: |
-          changed="$(git diff --name-only "$BEFORE" "$HEAD_SHA" -- VERSION docs/Power-BI-Vibes-Guide.md docs/build_guide.py || true)"
+          changed="$(git diff --name-only "$BEFORE" "$HEAD_SHA" -- VERSION docs/getting-started.md tools/build-guide.py || true)"
           if [ -z "$changed" ]; then
             echo "Guide inputs unchanged; verified build will not be committed."
             exit 0
