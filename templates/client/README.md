@@ -22,13 +22,14 @@ Useful commands include:
 - `/stress-test` - try to break the current design with realistic failure modes;
 - `/simplify` - identify removable or deferrable complexity;
 - `/what-next` - identify the highest-value next decision or test;
+- `/repo-recon` - map an unfamiliar existing repository without changing it;
 - `/commands` - show the current command menu.
 
-You can add a target, for example `/stress-test the forecasting logic`. These commands return analysis first and do not change the project unless you subsequently ask ChatGPT to implement selected findings.
+You can add a target, for example `/stress-test the forecasting logic`. These commands return analysis first and do not change the project unless you subsequently ask the agent to implement selected findings.
 
 ## First local setup
 
-ChatGPT can build in GitHub before the Windows machine is prepared. At the first Power BI Desktop handoff, follow the public [Windows Local Setup](https://github.com/dudechilling/Power-Bi-Vibes/blob/main/docs/WINDOWS-SETUP.md) guide.
+The agent can work in GitHub before the Windows machine is prepared. At the first Power BI Desktop handoff, follow the public [Windows Local Setup](https://github.com/dudechilling/Power-Bi-Vibes/blob/main/docs/windows-setup.md) guide.
 
 The normal local requirements are Power BI Desktop, Git for Windows, PowerShell, and GitHub authentication for this private repository. GitHub CLI and GitHub Desktop are optional.
 
