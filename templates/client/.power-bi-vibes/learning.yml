@@ -1,0 +1,16 @@
+learning_version: 1
+
+entries: []
+
+# Entry shape:
+# - id: L-001
+#   type: observation        # observation | lesson | pattern
+#   discovered: YYYY-MM-DD
+#   summary: <durable insight>
+#   evidence:
+#     - <concise evidence>
+#   implication: <why a future agent should care>
+#   action_taken: null
+#   status: provisional      # provisional | confirmed | rejected | promoted
+#   promotion: none          # none | candidate
+#   privacy_review: not_required  # not_required | required | passed | blocked
