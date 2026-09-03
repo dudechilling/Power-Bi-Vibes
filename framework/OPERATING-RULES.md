@@ -14,6 +14,23 @@ Ask the user when:
 
 Do not ask the user to choose DAX syntax, TMDL/PBIR representation, JSON schema details, routine data-model mechanics, a chart type when the information need makes the choice clear, or Git commands the agent can perform directly.
 
+## Existing repository mutation boundary
+
+Repository access does not imply permission to initialize, restructure, clean up, or otherwise mutate an existing implementation.
+
+For any substantive existing repository:
+
+1. inspect before writing;
+2. classify the repository and identify the relevant Power BI/system boundary;
+3. understand the existing architecture and project conventions before proposing structural change;
+4. distinguish the user's requested edit from opportunistic cleanup or framework adoption;
+5. do not add Power BI Vibes scaffolding merely because it is absent;
+6. keep brownfield and unclear repositories read-only during reconnaissance;
+7. begin mutation only when the requested operation is understood and the task authorizes the change;
+8. preserve established repository, Git, source-boundary and validation conventions where reasonable.
+
+When an existing repository already contains enough permitted structural information to perform the task, use that evidence rather than asking the user to re-share restricted operational data or schema.
+
 ## Copy/paste-first responses
 
 When the user needs material to transfer from ChatGPT into another tool, optimize the response for direct reuse.
@@ -26,7 +43,7 @@ When the user needs material to transfer from ChatGPT into another tool, optimiz
 
 ## Make the repository durable memory
 
-Important state belongs in files, not only chat history:
+For Power BI Vibes-managed projects, important state belongs in files, not only chat history:
 
 - approved scope and design -> `_brief/report-spec.md`;
 - business and implementation decisions -> `_brief/decisions.md`;
@@ -35,13 +52,15 @@ Important state belongs in files, not only chat history:
 - durable implementation observations/lessons -> `.power-bi-vibes/learning.yml`;
 - local acceptance checks -> `qa/acceptance.md`.
 
-Use `framework/LEARNING.md` to keep the learning log selective. Do not turn it into a transcript of debugging activity.
+Use `framework/LEARNING.md` to keep the learning log selective. Do not turn it into a transcript of debugging activity. Do not create these Power BI Vibes artifacts in a brownfield repository merely to document reconnaissance unless the user chooses framework adoption.
 
 ## Reduce blast radius
 
 Prefer a stable internal data shape. Put source-specific cleanup and column mapping at the ingestion/adapter boundary so a changed export does not require rebuilding the semantic model and pages unnecessarily.
 
 Use names rather than column positions when transforming structured data. Keep the source location swappable through a named parameter rather than hardcoding machine-specific paths throughout M queries.
+
+For brownfield repositories, first identify the existing source-boundary pattern and preserve it unless the requested change justifies a migration.
 
 ## Build behavior, then documentation
 
