@@ -74,38 +74,6 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Apply Windows PowerShell nullable compatibility fix
-        if: github.event_name == 'push'
-        shell: powershell
-        run: |
-          $sourcePath = 'tools/inspect-source.ps1'
-          $source = [System.IO.File]::ReadAllText($sourcePath)
-          $source = $source.Replace('param([string]$ResolvedPath, [Nullable[int]]$HeaderRowOverride)', 'param([string]$ResolvedPath, $HeaderRowOverride)')
-          $source = $source.Replace('$HeaderRowOverride.Value', '[int]$HeaderRowOverride')
-          $source = $source.Replace('[Nullable[int]]$HeaderRow', '[int]$HeaderRow')
-          [System.IO.File]::WriteAllText($sourcePath, $source, [System.Text.UTF8Encoding]::new($false))
-
-          $testPath = 'tools/test-inspect-source.ps1'
-          $test = [System.IO.File]::ReadAllText($testPath)
-          $test = $test.Replace('[Nullable[int]]$HeaderRowValue', '[int]$HeaderRowValue')
-          $test = $test.Replace('$HeaderRowValue.Value', '$HeaderRowValue')
-          [System.IO.File]::WriteAllText($testPath, $test, [System.Text.UTF8Encoding]::new($false))
-
       - name: Exercise inspect-source on Windows PowerShell
         shell: powershell
         run: .\tools\test-inspect-source.ps1
-
-      - name: Commit verified Windows compatibility fix
-        if: github.event_name == 'push'
-        shell: powershell
-        run: |
-          git add tools/inspect-source.ps1 tools/test-inspect-source.ps1
-          git diff --cached --quiet
-          if ($LASTEXITCODE -eq 0) {
-            Write-Host 'Windows compatibility fix is already committed.'
-            exit 0
-          }
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "fix: support header override on Windows PowerShell [skip ci]"
-          git push
