@@ -56,6 +56,26 @@ Avoid canned AI constructions and habitual AI vocabulary when ordinary wording w
 - Never promote private project lessons directly into the public framework.
 - Do not send production screenshots or logs outside the approved environment when they expose restricted information.
 
+## Local QA handoff after changes
+
+After you mutate this repository and report what changed, include a **Local QA handoff** unless the user explicitly says they do not want one.
+
+The handoff must include one self-contained fenced `powershell` block the user can copy and paste. Use the known local clone path when available; otherwise use `$Repo = '<LOCAL-CLONE-PATH>'`.
+
+The block must:
+
+- verify the clone path and change to it;
+- run `git status --short --branch` and stop if any tracked or untracked local changes exist;
+- run `git pull --ff-only` only from a clean worktree;
+- run `scripts/check-local-setup.ps1` on the first relevant local handoff when available;
+- start only local services whose startup commands are established by this repository or by the user;
+- launch the exact relevant `.pbip` or `.pbix` with `Start-Process` when Desktop QA applies and the entrypoint is known;
+- avoid destructive Git operations, cleans/resets, credential changes, package installation, and unrelated machine changes.
+
+If more than one Power BI entrypoint exists and the requested change does not make the correct one clear, do not guess. Tell the user which choice is needed instead of launching an arbitrary report.
+
+After the PowerShell block, list the task-specific QA actions and expected results from `qa/acceptance.md` and the change itself. Keep Desktop/local checks pending until they are actually performed.
+
 ## Optional analytical commands
 
 If a user invokes a registered Power BI Vibes command such as `/premature-framing`, `/data-savant`, `/blind-spots`, `/stress-test`, `/simplify`, `/what-next`, `/repo-recon`, or `/commands`, read the command registry/definition from the framework version recorded in `.power-bi-vibes/manifest.yml` before answering.
