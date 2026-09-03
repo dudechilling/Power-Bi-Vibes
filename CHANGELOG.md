@@ -2,8 +2,19 @@
 
 ## Unreleased
 
-Brownfield repository reconnaissance, agent hygiene, and bootstrap hardening.
+Repository authority, onboarding, agent hygiene, and brownfield hardening.
 
+- Restructured the framework around explicit audiences and authority: `README.md` for first-time users, root `AGENTS.md` as canonical always-read agent policy, `workflows/` for procedures, `policy/` for task-specific domain rules, `maintainer/` for framework-only work, and `tools/` for framework build/integrity utilities.
+- Added root and client `CLAUDE.md` wrappers containing only `@AGENTS.md` so Claude Code consumes the canonical policy without maintaining a duplicate instruction set.
+- Moved bootstrap and client-update procedures to `workflows/bootstrap.md` and `workflows/update.md`; prompts now tell agents to read `AGENTS.md` first and then load the relevant workflow.
+- Replaced the former `framework/` policy layout with task-scoped `policy/data.md`, `policy/git.md`, `policy/privacy.md`, `policy/qa.md`, `policy/learning.md`, and `policy/power-bi.md`.
+- Moved framework-only rules, release checks, and repository-mode evaluations under `maintainer/` so routine project agents do not need maintainer context.
+- Reworked `templates/client/` so template paths match installed client paths directly, including `.power-bi-vibes/`, `_brief/`, `config/`, `qa/`, and `scripts/`; bootstrap no longer relies on a separate source-to-destination mapping table.
+- Made the generated client `AGENTS.md` self-contained for core hygiene, scope, voice, privacy, Git, and validation behavior so a client project remains operable when the framework repository is unavailable.
+- Rewrote the root README as a beginner landing page and consolidated the full tutorial into `docs/getting-started.md`; renamed setup guides to `docs/github-setup.md` and `docs/windows-setup.md`.
+- Moved the guide builder and integrity audit to `tools/build-guide.py` and `tools/repo-integrity.py`; CI now rebuilds from `docs/getting-started.md` and validates the restructured paths.
+- Added `tools/claude-artifact-guard.ps1` as an optional Claude Code `PreToolUse` enforcement example for blocking familiar meta-artifact names and requiring approval for new Markdown files.
+- Added integrity checks that require the canonical policy routing, mirrored client template layout, thin Claude wrappers, and absence of superseded file paths.
 - Added a mandatory Repository Mode Gate to classify target repositories as `greenfield`, `managed-existing`, `brownfield-powerbi`, or `unknown-existing` before scaffolding or substantive mutation.
 - Added bounded read-only brownfield reconnaissance for unfamiliar existing Power BI repositories, including PBIP/PBIR/TMDL structure, report and semantic-model boundaries, source architecture, validation tooling, and project conventions.
 - Added an explicit mutation boundary: repository write capability does not imply permission to initialize, restructure, clean up, or install Power BI Vibes scaffolding into an existing implementation.
@@ -13,17 +24,9 @@ Brownfield repository reconnaissance, agent hygiene, and bootstrap hardening.
 - Added scope-discipline rules that keep documentation, cleanup, refactoring, research, packaging, framework adoption, and future-work artifacts out of scope unless required by the requested work.
 - Added communication rules that keep transient plans, progress, and findings in the conversation unless the user requests a file or an established durable project artifact must be updated.
 - Added writing-voice rules for plain contemporary English, direct openings, restrained structure, specific uncertainty, natural contractions, and avoidance of canned assistant phrasing, generic closings, mechanical prose, rhetorical transitions, fake familiarity, and habitual AI vocabulary when simpler precise wording is available.
-- Propagated repository hygiene, scope discipline, communication, and writing-voice governance into the client `AGENTS.md` template.
-- Added `/repo-recon` as an optional non-mutating command for explicit architectural mapping of an unfamiliar Power BI repository. The command complements rather than replaces automatic repository classification.
-- Updated bootstrap sequencing so greenfield projects retain the job-first workflow while brownfield projects inspect the existing implementation before generic product-discovery questions.
-- Updated the canonical bootstrap prompt from a greenfield-only "build a Power BI tool" framing to a neutral "work on a Power BI project" framing.
+- Added `/repo-recon` as an optional non-mutating command for explicit architectural mapping of an unfamiliar Power BI repository.
 - Added project repository and local clone fields to the bootstrap prompt. The local path is contextual and does not imply that the current agent has local filesystem access or authenticated local Git access.
-- Updated onboarding guidance to support both new repositories and existing Power BI repositories without requiring users to create a blank replacement repository.
-- Added repository-mode behavioral evaluation cases covering README-only greenfield repos, existing PBIP/PBIR/TMDL projects, managed Power BI Vibes projects, mixed software repositories, explicit read-only work, restricted-data scenarios, and supplied local clones.
-- Updated framework release checks so brownfield behavior, prompt alignment, local-clone capability separation, and no-scaffold-before-reconnaissance behavior must be reviewed before release.
-- Updated core operating rules and framework agent guidance to preserve established brownfield architecture and keep GitHub authorization, local filesystem access, and local Git/GitHub authentication as separate capabilities.
-- Updated README and START-HERE documentation to describe repository modes, brownfield behavior, `/repo-recon`, and local-clone handling.
-- The generated client PDF has not been regenerated or release-version metadata advanced as part of these source changes; those remain release-gate work.
+- The generated client PDF has not been regenerated or release-version metadata advanced as part of the branch restructure; those remain release-gate work.
 
 ## 0.1.4 - 2026-08-31
 
