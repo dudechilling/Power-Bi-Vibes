@@ -84,27 +84,41 @@ function New-TestXlsx {
 }
 
 function Invoke-InspectorJson {
-    param([object[]]$Arguments)
-    $raw = & $Inspector @Arguments | Out-String
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$SourcePath,
+        [string]$DelimiterValue,
+        [Nullable[int]]$HeaderRowValue
+    )
+
+    if ($PSBoundParameters.ContainsKey('DelimiterValue')) {
+        $raw = & $Inspector $SourcePath -Delimiter $DelimiterValue | Out-String
+    }
+    elseif ($PSBoundParameters.ContainsKey('HeaderRowValue')) {
+        $raw = & $Inspector $SourcePath -HeaderRow $HeaderRowValue.Value | Out-String
+    }
+    else {
+        $raw = & $Inspector $SourcePath | Out-String
+    }
     return $raw | ConvertFrom-Json
 }
 
 try {
     $csv = Join-Path $TempRoot 'normal.csv'
     [System.IO.File]::WriteAllText($csv, "Name,Cost,Status`r`nSECRET_ROW_VALUE,10,Open`r`n", [System.Text.UTF8Encoding]::new($false))
-    $csvResult = Invoke-InspectorJson -Arguments @($csv)
+    $csvResult = Invoke-InspectorJson -SourcePath $csv
     Assert-True ($csvResult.structures[0].columns.Count -eq 3) 'comma CSV should expose three headers'
     Assert-True ($csvResult.structures[0].columns[0].name -eq 'Name') 'comma CSV first header should be Name'
     Assert-True (($csvResult | ConvertTo-Json -Depth 12) -notmatch 'SECRET_ROW_VALUE') 'CSV data-row values must not appear in output'
 
     $tsv = Join-Path $TempRoot 'normal.tsv'
     [System.IO.File]::WriteAllText($tsv, "Name`tCost`tStatus`r`nSECRET_ROW_VALUE`t10`tOpen`r`n", [System.Text.UTF8Encoding]::new($false))
-    $tsvResult = Invoke-InspectorJson -Arguments @($tsv)
+    $tsvResult = Invoke-InspectorJson -SourcePath $tsv
     Assert-True ($tsvResult.structures[0].columns.Count -eq 3) 'TSV should use tab delimiter by default'
 
     $semi = Join-Path $TempRoot 'semicolon.csv'
     [System.IO.File]::WriteAllText($semi, "Name;Cost;Status`r`nSECRET_ROW_VALUE;10;Open`r`n", [System.Text.UTF8Encoding]::new($false))
-    $semiResult = Invoke-InspectorJson -Arguments @($semi, '-Delimiter', ';')
+    $semiResult = Invoke-InspectorJson -SourcePath $semi -DelimiterValue ';'
     Assert-True ($semiResult.structures[0].columns.Count -eq 3) 'delimiter override should parse semicolon CSV'
     Assert-True ($semiResult.structures[0].columns[2].name -eq 'Status') 'semicolon CSV third header should be Status'
 
@@ -113,7 +127,7 @@ try {
         [pscustomobject]@{ Row = 1; Values = @('Name', 'Cost', 'Status') },
         [pscustomobject]@{ Row = 2; Values = @('SECRET_ROW_VALUE', '10', 'Open') }
     )
-    $normalXlsxResult = Invoke-InspectorJson -Arguments @($normalXlsx)
+    $normalXlsxResult = Invoke-InspectorJson -SourcePath $normalXlsx
     Assert-True ($normalXlsxResult.structures[0].header_row -eq 1) 'normal XLSX should auto-select row 1'
     Assert-True ($normalXlsxResult.structures[0].columns.Count -eq 3) 'normal XLSX should expose three headers'
     Assert-True (@($normalXlsxResult.warnings).Count -eq 0) 'normal XLSX should not produce a suspicious-header warning'
@@ -125,12 +139,12 @@ try {
         [pscustomobject]@{ Row = 2; Values = @('Name', 'Cost', 'Status') },
         [pscustomobject]@{ Row = 3; Values = @('SECRET_ROW_VALUE', '10', 'Open') }
     )
-    $bannerAuto = Invoke-InspectorJson -Arguments @($bannerXlsx)
+    $bannerAuto = Invoke-InspectorJson -SourcePath $bannerXlsx
     Assert-True ($bannerAuto.structures[0].header_row -eq 1) 'banner workbook should retain deterministic first-populated-row auto-selection'
     Assert-True (@($bannerAuto.warnings).Count -ge 1) 'banner workbook should warn that auto-selected header looks suspicious'
     Assert-True (($bannerAuto.warnings -join ' ') -match 'Consider -HeaderRow') 'banner warning should direct user to HeaderRow override'
 
-    $bannerOverride = Invoke-InspectorJson -Arguments @($bannerXlsx, '-HeaderRow', '2')
+    $bannerOverride = Invoke-InspectorJson -SourcePath $bannerXlsx -HeaderRowValue 2
     Assert-True ($bannerOverride.structures[0].header_row -eq 2) 'HeaderRow override should select row 2'
     Assert-True ($bannerOverride.structures[0].columns[0].name -eq 'Name') 'HeaderRow override should expose actual headers'
 
@@ -140,9 +154,9 @@ try {
         [pscustomobject]@{ Row = 3; Values = @('Name', 'Cost', 'Status') },
         [pscustomobject]@{ Row = 4; Values = @('SECRET_ROW_VALUE', '10', 'Open') }
     ) -MergeRef 'A1:C1'
-    $mergedAuto = Invoke-InspectorJson -Arguments @($mergedXlsx)
+    $mergedAuto = Invoke-InspectorJson -SourcePath $mergedXlsx
     Assert-True (@($mergedAuto.warnings).Count -ge 1) 'merged banner with spacer should warn'
-    $mergedOverride = Invoke-InspectorJson -Arguments @($mergedXlsx, '-HeaderRow', '3')
+    $mergedOverride = Invoke-InspectorJson -SourcePath $mergedXlsx -HeaderRowValue 3
     Assert-True ($mergedOverride.structures[0].header_row -eq 3) 'HeaderRow should work across a blank spacer row'
     Assert-True ($mergedOverride.structures[0].columns.Count -eq 3) 'merged/spacer workbook should expose actual headers with override'
 
@@ -151,7 +165,7 @@ try {
         $db = Join-Path $TempRoot 'fixture.sqlite'
         & $sqlite.Source $db 'CREATE TABLE sample (id INTEGER PRIMARY KEY, name TEXT NOT NULL);'
         if ($LASTEXITCODE -ne 0) { throw 'Failed to create SQLite fixture.' }
-        $sqliteResult = Invoke-InspectorJson -Arguments @($db)
+        $sqliteResult = Invoke-InspectorJson -SourcePath $db
         Assert-True ($sqliteResult.structures[0].name -eq 'sample') 'SQLite table should be discovered'
         Assert-True ($sqliteResult.structures[0].columns.Count -eq 2) 'SQLite schema should expose two columns'
         Write-Host 'SQLite fixture: PASS'
