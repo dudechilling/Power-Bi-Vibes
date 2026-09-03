@@ -1,7 +1,9 @@
-Continue work on this Power BI project:
+Continue work on this existing Power BI Vibes-managed project:
 <PASTE YOUR PRIVATE GITHUB REPOSITORY URL>
 
 Use the Power BI Vibes framework:
 https://github.com/dudechilling/Power-Bi-Vibes
 
 Read the project AGENTS.md, .power-bi-vibes/manifest.yml, and confirmed entries in .power-bi-vibes/learning.yml first. Inspect recent repository state and validation capability/status, then continue from the accepted product rather than rebuilding it.
+
+If those Power BI Vibes management artifacts are absent, stop treating this as a resume flow. Return to BOOTSTRAP.md, classify the repository, and use brownfield reconnaissance when substantive Power BI assets already exist.
