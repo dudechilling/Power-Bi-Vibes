@@ -10,7 +10,8 @@ You need:
 
 - a GitHub account;
 - either a new private GitHub repository or an existing project repository you are permitted to work with;
-- ChatGPT with GitHub connected and permission to read that repository, plus write permission only when the task requires mutation.
+- ChatGPT with GitHub connected and permission to read that repository, plus write permission only when the task requires mutation;
+- a local clone path when one already exists, or `not cloned yet` when it does not.
 
 You do **not** need Git, GitHub Desktop, GitHub CLI, Power BI Desktop, DAX knowledge, or Power Query knowledge before ChatGPT starts.
 
@@ -55,7 +56,7 @@ Repository write access does not mean ChatGPT should immediately write. Existing
 
 ## 3. Start the project or repository session
 
-Paste this into a new ChatGPT conversation and replace the project URL:
+Paste this into a new ChatGPT conversation and replace the project URL and local path:
 
 ```text
 I want to work on a Power BI project.
@@ -64,14 +65,19 @@ Use this framework:
 https://github.com/dudechilling/Power-Bi-Vibes
 
 My project repository is:
-<PASTE YOUR GITHUB REPOSITORY URL>
+<PASTE YOUR PRIVATE GITHUB REPOSITORY URL>
 
-Read BOOTSTRAP.md in Power-Bi-Vibes and follow it.
+My local clone is:
+<PASTE YOUR LOCAL PATH HERE>
+
+Read BOOTSTRAP.md and follow it.
 
 Inspect the project repository before assuming whether it is new, existing, or already managed by Power BI Vibes. Do not modify an existing implementation until you understand its current structure and my requested task.
 
 Do not ask me to share operational data that I am not permitted to share.
 ```
+
+If you have not cloned the repository yet, replace the local-path placeholder with `not cloned yet`. Supplying a local path does not force ChatGPT to use local tooling; it gives the agent the actual working-copy context when that becomes relevant.
 
 ChatGPT should inspect both repositories and run the Repository Mode Gate in `BOOTSTRAP.md`.
 
@@ -144,6 +150,8 @@ The normal local requirements are:
 
 GitHub CLI and GitHub Desktop are optional. SQLite CLI is optional unless the local schema inspector needs to inspect a SQLite database.
 
+If you already supplied a usable local clone, ChatGPT should preserve that path rather than telling you to clone the same repository again.
+
 For a Power BI Vibes-managed repository, after cloning, run the included readiness checker:
 
 ```powershell
@@ -152,7 +160,9 @@ For a Power BI Vibes-managed repository, after cloning, run the included readine
 
 For a brownfield repository, use its existing setup/readiness instructions first when present.
 
-## 10. Clone to a short local path
+## 10. Clone to a short local path when needed
+
+Skip this section if you already have a local clone at the path supplied in the bootstrap prompt.
 
 For a first local copy:
 
