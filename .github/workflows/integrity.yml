@@ -67,3 +67,13 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "docs: rebuild verified client guide [skip ci]"
           git push
+
+  inspect-source-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Exercise inspect-source on Windows PowerShell
+        shell: powershell
+        run: .\tools\test-inspect-source.ps1
