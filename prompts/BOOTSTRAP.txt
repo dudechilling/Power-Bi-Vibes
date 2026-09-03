@@ -4,12 +4,12 @@ Use this framework:
 https://github.com/dudechilling/Power-Bi-Vibes
 
 My project repository is:
-<PASTE YOUR PRIVATE GITHUB REPOSITORY URL>
+<PASTE YOUR PROJECT REPOSITORY URL>
 
 My local clone is:
-<PASTE YOUR LOCAL PATH HERE>
+<PASTE YOUR LOCAL PATH HERE OR WRITE "not cloned yet">
 
-Read BOOTSTRAP.md and follow it.
+Read AGENTS.md first, then follow workflows/bootstrap.md.
 
 Inspect the project repository before assuming whether it is new, existing, or already managed by Power BI Vibes. Do not modify an existing implementation until you understand its current structure and my requested task.
 
