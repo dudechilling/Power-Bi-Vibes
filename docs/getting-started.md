@@ -71,6 +71,30 @@ If real source data is restricted, the agent can often work from existing reposi
 
 Schema, screenshots, logs, file paths, URLs, field names, and internal terminology can also be sensitive.
 
+### Inspect a local source without exposing data rows
+
+The framework includes `tools/inspect-source.ps1` for local metadata-only inspection of CSV, TSV, XLSX/XLSM, and SQLite sources. It reports structure and header/schema information but intentionally does not emit data-row values.
+
+Basic use:
+
+```powershell
+.\tools\inspect-source.ps1 C:\path\to\export.xlsx
+```
+
+If an Excel workbook has a title, banner, merged cells, or spacer rows above the real headers, the inspector warns when the automatically selected header row looks suspicious. Specify the real row explicitly when needed:
+
+```powershell
+.\tools\inspect-source.ps1 C:\path\to\export.xlsx -HeaderRow 3
+```
+
+CSV defaults to comma and TSV defaults to tab. Override the delimiter for another delimited export, such as a semicolon-delimited CSV:
+
+```powershell
+.\tools\inspect-source.ps1 C:\path\to\export.csv -Delimiter ';'
+```
+
+Review the resulting schema before sharing it. Field names and internal terminology can still be sensitive even when row values are omitted.
+
 ## 6. Let the agent implement authorized changes
 
 For a new Power BI Vibes-managed project, the agent installs the client template, records the project contract, and builds in logical batches.
