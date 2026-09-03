@@ -29,7 +29,7 @@ function Add-ZipText {
     param($Archive, [string]$EntryName, [string]$Text)
     $entry = $Archive.CreateEntry($EntryName)
     $stream = $entry.Open()
-    $writer = New-Object System.IO.StreamWriter($stream, [System.Text.UTF8Encoding]::new($false))
+    $writer = [System.IO.StreamWriter]::new($stream, [System.Text.UTF8Encoding]::new($false))
     try { $writer.Write($Text) }
     finally {
         $writer.Dispose()
@@ -48,33 +48,33 @@ function New-TestXlsx {
     Add-Type -AssemblyName System.IO.Compression.FileSystem
 
     $stream = [System.IO.File]::Open($Path, [System.IO.FileMode]::Create)
-    $archive = New-Object System.IO.Compression.ZipArchive($stream, [System.IO.Compression.ZipArchiveMode]::Create, $false)
+    $archive = [System.IO.Compression.ZipArchive]::new($stream, [System.IO.Compression.ZipArchiveMode]::Create, $false)
     try {
         Add-ZipText $archive '[Content_Types].xml' '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>'
         Add-ZipText $archive '_rels/.rels' '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'
         Add-ZipText $archive 'xl/workbook.xml' '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Sheet1" sheetId="1" r:id="rId1"/></sheets></workbook>'
         Add-ZipText $archive 'xl/_rels/workbook.xml.rels' '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>'
 
-        $rowXml = New-Object System.Text.StringBuilder
+        $rowXml = [System.Text.StringBuilder]::new()
         foreach ($rowSpec in $Rows) {
             $rowNumber = [int]$rowSpec.Row
-            [void]$rowXml.Append("<row r=\"$rowNumber\">")
+            [void]$rowXml.Append(('<row r="{0}">' -f $rowNumber))
             $values = @($rowSpec.Values)
             for ($i = 0; $i -lt $values.Count; $i++) {
                 if ($null -eq $values[$i]) { continue }
                 $cellRef = "$(Get-ColumnName ($i + 1))$rowNumber"
                 $escaped = [System.Security.SecurityElement]::Escape([string]$values[$i])
-                [void]$rowXml.Append("<c r=\"$cellRef\" t=\"inlineStr\"><is><t>$escaped</t></is></c>")
+                [void]$rowXml.Append(('<c r="{0}" t="inlineStr"><is><t>{1}</t></is></c>' -f $cellRef, $escaped))
             }
             [void]$rowXml.Append('</row>')
         }
 
         $mergeXml = ''
         if (-not [string]::IsNullOrWhiteSpace($MergeRef)) {
-            $mergeXml = "<mergeCells count=\"1\"><mergeCell ref=\"$MergeRef\"/></mergeCells>"
+            $mergeXml = '<mergeCells count="1"><mergeCell ref="{0}"/></mergeCells>' -f $MergeRef
         }
 
-        $sheetXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><sheetData>$($rowXml.ToString())</sheetData>$mergeXml</worksheet>"
+        $sheetXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>{0}</sheetData>{1}</worksheet>' -f $rowXml.ToString(), $mergeXml
         Add-ZipText $archive 'xl/worksheets/sheet1.xml' $sheetXml
     }
     finally {
