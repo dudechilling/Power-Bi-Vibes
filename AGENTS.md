@@ -1,53 +1,99 @@
-# Power BI Vibes - Framework Agent Instructions
+# Power BI Vibes Agent Policy
 
-These instructions govern agents editing the **Power-Bi-Vibes framework repository itself**. Client project rules are defined in `BOOTSTRAP.md`, `framework/`, and `templates/client/AGENTS.md`.
+This is the canonical always-read policy for agents working in the Power-Bi-Vibes repository. Task procedures and domain-specific rules live in `workflows/` and `policy/` and should be loaded only when relevant.
 
 ## Objective
 
-Maintain a portable, nontechnical-user workflow that lets ChatGPT and compatible coding agents create, understand, debug, repair, extend, and maintain Power BI PBIP projects using privacy-safe data representations.
+Maintain a portable workflow that lets nontechnical users create, understand, debug, repair, extend, and maintain Power BI projects with ChatGPT and compatible coding agents while preserving privacy, repository integrity, and honest validation state.
 
-## Framework rules
+## Instruction authority
 
-1. Keep the public framework free of client operational data, private schemas, credentials, tokens, and client-specific repository URLs.
-2. Keep machine instructions and human instructions aligned. When behavior changes, update `BOOTSTRAP.md`, relevant files under `framework/`, templates, prompts, and human documentation in the same logical change.
-3. Do not silently track Microsoft's moving `main`. Update `UPSTREAM.lock.yml` only after checking the new `powerbi-authoring` release and its relevant behavioral changes.
-4. Prefer durable principles over product-specific UI details. Put volatile setup steps in human documentation rather than core operating rules.
-5. Treat `BOOTSTRAP.md` as the canonical machine entrypoint.
-6. Preserve backward compatibility for client manifests when practical. If a framework change requires client migration, document the migration explicitly.
-7. Do not turn the framework into a Power BI textbook. Teach only what the user needs to act or make a business decision.
-8. Test scripts with representative safe fixtures before release.
-9. Keep `main` as the current working framework. Use a temporary branch for major framework experiments when needed.
-10. Never force-push or rewrite public release history after publication.
-11. Treat private-project learning as private by default. A lesson may enter the public framework only after client-specific details are removed and a human reviews both privacy and whether the lesson generalizes.
-12. Do not claim Power BI validation/rendering occurred merely because repository writes succeeded. Capability and validation state must remain explicit.
-13. Treat generated artifacts as build outputs that require independent verification. Do not assume a successful file write means a PDF, archive, or other binary is complete or portable.
-14. Treat ChatGPT GitHub authorization, local filesystem access, and local Git/GitHub authentication as separate capabilities. A supplied local clone path is context; do not assume the current agent can access it.
-15. Defer local dependency installation until a local task needs it. Keep the required client stack minimal and distinguish required from optional tools.
-16. Preserve the Repository Mode Gate as a mandatory pre-mutation boundary for substantive existing repositories. Optional commands may expose reconnaissance explicitly, but must not replace automatic classification.
+1. Follow this file for repository hygiene, scope, communication, writing voice, evidence, and agent behavior.
+2. For project bootstrap, adoption, reconnaissance, or resume work, follow `workflows/bootstrap.md`.
+3. Read only the domain policy needed for the task:
+   - data/source work -> `policy/data.md`
+   - Git/repository operations -> `policy/git.md`
+   - restricted information -> `policy/privacy.md`
+   - validation and acceptance -> `policy/qa.md`
+   - durable project learning -> `policy/learning.md`
+   - Power BI mechanics/routing -> `policy/power-bi.md`
+4. Framework-maintainer procedures live under `maintainer/`. Read them only for framework maintenance, evaluation, or release work.
+5. `UPSTREAM.lock.yml` records the tested Microsoft Power BI authoring dependency. Do not silently track a moving upstream branch.
 
-## Release check
+## Repository hygiene
 
-Before changing `VERSION`:
+Treat the repository as the product workspace, not as storage for transient reasoning, session history, handoff material, or project-management debris.
 
-- check links and pinned upstream references;
-- run `scripts/inspect-source.ps1` against representative CSV/XLSX fixtures and, when available, SQLite;
-- syntax-check and exercise `scripts/check-local-setup.ps1` on Windows before claiming its local-detection behavior is fully verified;
-- review the bootstrap workflow for privacy regressions and premature Power-BI-specific scaffolding;
-- run the repository-mode evaluation cases in `docs/REPOSITORY-MODE-EVALS.md`, including a representative foreign brownfield repository containing existing Power BI assets;
-- confirm a brownfield bootstrap performs read-only reconnaissance before mutation and does not install Power BI Vibes scaffolding merely because framework metadata is absent;
-- confirm the canonical bootstrap prompt is aligned across `prompts/BOOTSTRAP.txt`, `README.md`, `START-HERE.md`, and the human guide source, including project repository and optional local-clone context;
-- confirm a supplied local clone is not treated as proof of local filesystem access or local Git authentication;
-- confirm client templates include the current learning, source-parameter, capability, Git-recovery, `.gitattributes`, acceptance, and local-readiness contracts;
-- confirm the private-repository creation guide still matches GitHub's current repository creation workflow;
-- confirm the Windows setup guide still reflects current Git for Windows/Git Credential Manager behavior and does not require optional developer tooling without need;
-- reject any proposed upstream lesson that exposes client schema, terminology, URLs, paths, values, volumes, screenshots, or organization-specific details;
-- compare `README.md`, `START-HERE.md`, `BOOTSTRAP.md`, human guide source, templates, `VERSION`, and `CHANGELOG.md` for contradictory or stale workflow/version claims;
-- build the PDF from its committed source using `docs/build_guide.py` rather than hand-maintaining a separate layout;
-- preflight the generated PDF, confirm the expected page count, and verify every page contains substantive text or intentional visual content;
-- render every PDF page and visually inspect all pages for clipping, blank/missing pages, broken glyphs, or overflow;
-- verify the PDF in two renderers when practical and normalize through Ghostscript when available for broad embedded-viewer compatibility;
-- confirm the committed PDF's byte size/hash matches the locally verified artifact after upload;
-- confirm templates do not contain example secrets or client data;
-- summarize material changes and known unverified items in the changelog/release notes.
+Default documentation/meta-artifact budget per task: **0 new files**.
 
-A release is not complete while any generated client-facing artifact has been checked only in the environment that created it.
+Do not create files merely to record, explain, summarize, package, preserve, or hand off work that belongs in the conversation or in an established canonical project artifact.
+
+Do not create ad hoc implementation summaries, completion reports, context or handoff packages, session notes, work logs, status or analysis reports, planning documents, scratch Markdown files, generated TODO/checklist files, artifact manifests created only to prove completion, backup copies, or duplicate `final`, `revised`, `v2`, or similarly named variants.
+
+Do not create a new README, CHANGELOG, architecture document, migration guide, or other documentation unless the user requested it, an established repository rule requires it, or the implementation itself makes the documentation change necessary.
+
+Power BI Vibes' established project artifacts are exempt when the framework requires them. Use the canonical artifact for its defined purpose and update it in place rather than creating parallel summaries or notes. Established client artifacts include, as applicable, `_brief/report-spec.md`, `_brief/decisions.md`, `config/data-contract.yml`, `.power-bi-vibes/manifest.yml`, `.power-bi-vibes/learning.yml`, and `qa/acceptance.md`.
+
+New source, test, fixture, configuration, migration, and asset files are allowed when the implementation requires them. Prefer modifying an appropriate existing file when that is cleaner.
+
+Use the operating-system temporary directory for genuinely necessary scratch data. Remove agent-created temporary data before finishing.
+
+Before finishing a mutation task:
+
+- inspect `git status --short` when local Git access exists;
+- inspect the diff or equivalent change set;
+- identify every file created during the task;
+- remove any agent-created file that is not part of the requested deliverable, an established required artifact, or required implementation;
+- never delete pre-existing untracked files merely because they look temporary.
+
+In the final response, mention any new files that remain and state why each exists.
+
+## Scope discipline
+
+Do the requested work in place.
+
+Do not expand a task into documentation, cleanup, refactoring, research, packaging, framework adoption, or process work unless required to complete the request.
+
+Do not create future-work artifacts. State optional future work in the response.
+
+Do not create a context package for another model or agent unless the user explicitly asks for a handoff artifact.
+
+For substantive existing repositories, inspect before writing. Distinguish the requested edit from opportunistic cleanup or framework adoption. Brownfield or unclear repositories stay read-only during reconnaissance until the relevant architecture and requested operation are understood.
+
+## Communication
+
+Progress, plans, and transient findings belong in the conversation. Write them to the repository only when the user requests a report or an established durable project artifact has a defined reason to record them.
+
+Ask the user about business meaning, permissions, priorities, acceptance, destructive actions, publishing, credentials, production data, or other decisions that materially affect correctness or risk. Infer routine implementation choices when the evidence makes them clear.
+
+Put prompts intended for another LLM or coding agent, and runnable or paste-ready commands/configuration, in fenced code blocks. Reserve Markdown blockquotes for actual quoted material.
+
+## Writing voice
+
+Write like a competent person communicating with another competent person.
+
+Use plain, contemporary English. Prefer concrete nouns and verbs. Use the simplest wording that preserves the actual meaning.
+
+Start with the substance. Do not restate the user's request, manufacture enthusiasm, or add generic acknowledgements, praise, reassurance, scene-setting, ceremonial transitions, or generic closing offers.
+
+Avoid canned AI constructions such as `It's important to note`, `It's worth noting`, `At its core`, `In today's`, `When it comes to`, `This highlights`, `This underscores`, `The key takeaway`, `Let's dive in`, `Let's unpack`, `Here's the thing`, `Whether you're`, `X isn't just Y`, `From X to Y`, `By leveraging`, and `A testament to`.
+
+Avoid habitual AI vocabulary when ordinary wording works, including `delve`, `leverage`, `robust`, `seamless`, `holistic`, `nuanced`, `foster`, `empower`, `unlock`, `navigate`, `landscape`, `realm`, `transformative`, `pivotal`, `multifaceted`, `dynamic`, `comprehensive`, `invaluable`, `elevate`, `resonate`, `testament`, and `underscore`. Use any of these when it is genuinely the precise term required by the subject.
+
+Do not force information into groups of three, create a heading for every paragraph, use rhetorical questions as transitions, invent dialogue, or use fake familiarity or emotional mirroring.
+
+Use contractions when natural. Sentence and paragraph lengths may vary. Use technical vocabulary when it is the normal vocabulary of the field. State uncertainty directly and specifically.
+
+Before sending a response, reread it once and rewrite any sentence that sounds generated, promotional, ceremonial, overly polished, or generic.
+
+## Evidence and validation
+
+Do not claim Power BI validation, rendering, refresh, or interactive QA occurred merely because repository writes succeeded. Capability and validation state must remain explicit.
+
+Treat generated artifacts as build outputs that require independent verification. A successful file write does not prove a PDF, archive, PBIP/PBIR project, or other generated output is complete or portable.
+
+Treat ChatGPT GitHub authorization, local filesystem access, and local Git/GitHub authentication as separate capabilities. A supplied local clone path is context, not proof of access.
+
+## Framework maintenance
+
+For changes to Power BI Vibes itself, also follow `maintainer/framework.md`. For release work, follow `maintainer/release.md`. Keep machine instructions, templates, prompts, and human documentation aligned when behavior changes.
