@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import re
-import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -35,11 +34,11 @@ REQUIRED = [
     "maintainer/evals/repository-modes.md",
     "tools/build-guide.py",
     "tools/repo-integrity.py",
+    "tools/inspect-source.ps1",
+    "tools/claude-artifact-guard.ps1",
     "prompts/BOOTSTRAP.txt",
     "prompts/RESUME.txt",
     "prompts/UPDATE.txt",
-    "scripts/check-local-setup.ps1",
-    "scripts/inspect-source.ps1",
     "templates/client/.gitattributes",
     "templates/client/.gitignore",
     "templates/client/AGENTS.md",
@@ -140,7 +139,10 @@ def check_template_mirror() -> None:
 
 def check_policy_routing() -> None:
     agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
-    for rel in ["policy/data.md", "policy/git.md", "policy/privacy.md", "policy/qa.md", "policy/learning.md", "policy/power-bi.md", "workflows/bootstrap.md"]:
+    for rel in [
+        "policy/data.md", "policy/git.md", "policy/privacy.md", "policy/qa.md",
+        "policy/learning.md", "policy/power-bi.md", "workflows/bootstrap.md",
+    ]:
         if rel not in agents:
             fail(f"AGENTS.md does not route to {rel}")
     if (ROOT / "CLAUDE.md").read_text(encoding="utf-8").strip() != "@AGENTS.md":
@@ -178,13 +180,16 @@ def check_pdf() -> None:
 
 def check_no_superseded_paths() -> None:
     old_paths = [
-        "BOOTSTRAP.md", "START-HERE.md", "framework/OPERATING-RULES.md",
-        "framework/DATA.md", "framework/GIT.md", "framework/LEARNING.md",
-        "framework/MICROSOFT-POWERBI.md", "framework/PRIVACY.md", "framework/QA.md",
-        "framework/UPDATES.md", "docs/CREATE-PRIVATE-REPO.md", "docs/WINDOWS-SETUP.md",
-        "docs/Power-BI-Vibes-Guide.md", "docs/REPOSITORY-MODE-EVALS.md", "docs/build_guide.py",
-        "scripts/repo_integrity.py", "templates/client/manifest.yml", "templates/client/learning.yml",
-        "templates/client/report-spec.md", "templates/client/decisions.md", "templates/client/data-contract.yml",
+        "BOOTSTRAP.md", "START-HERE.md",
+        "framework/OPERATING-RULES.md", "framework/DATA.md", "framework/GIT.md",
+        "framework/LEARNING.md", "framework/MICROSOFT-POWERBI.md",
+        "framework/PRIVACY.md", "framework/QA.md", "framework/UPDATES.md",
+        "docs/CREATE-PRIVATE-REPO.md", "docs/WINDOWS-SETUP.md",
+        "docs/Power-BI-Vibes-Guide.md", "docs/REPOSITORY-MODE-EVALS.md",
+        "docs/build_guide.py", "scripts/repo_integrity.py", "scripts/inspect-source.ps1",
+        "scripts/check-local-setup.ps1", "templates/client/manifest.yml",
+        "templates/client/learning.yml", "templates/client/report-spec.md",
+        "templates/client/decisions.md", "templates/client/data-contract.yml",
         "templates/client/acceptance.md",
     ]
     for rel in old_paths:
