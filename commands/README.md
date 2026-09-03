@@ -32,7 +32,7 @@ Examples:
 - Commands do not override privacy, security, evidence, Git, QA, repository-mode, or validation rules elsewhere in Power BI Vibes.
 - Read only the project artifacts needed for the command. Do not turn a focused command into a full repository audit unless its purpose requires one.
 - Distinguish supported findings from inference and unknowns when that distinction affects the recommendation.
-- `/repo-recon` is an explicit reconnaissance lens. It does not replace the automatic Repository Mode Gate required by `BOOTSTRAP.md`.
+- `/repo-recon` is an explicit reconnaissance lens. It does not replace the automatic Repository Mode Gate required by `workflows/bootstrap.md`.
 
 ## Available commands
 
