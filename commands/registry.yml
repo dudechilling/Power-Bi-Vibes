@@ -47,3 +47,10 @@ commands:
     mode: analysis
     mutates_project: false
     description: Identify the highest-value next decision, test, or validation step from current project state.
+
+  repo-recon:
+    trigger: /repo-recon
+    file: repo-recon.md
+    mode: analysis
+    mutates_project: false
+    description: Perform read-only architectural reconnaissance of an existing Power BI repository before debugging, extending, repairing, or reverse engineering it.
