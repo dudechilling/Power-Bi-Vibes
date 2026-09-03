@@ -99,6 +99,19 @@ They are behavioral acceptance cases for agent sessions. They do not require pro
 3. request a scrubbed/schema-only representation only if a material unknown remains;
 4. treat schema, connection metadata, URLs, screenshots, and internal names as potentially sensitive.
 
+## Case 8 - Bootstrap includes an existing local clone
+
+**Given** the user supplies both a GitHub project repository and a local clone path in the bootstrap prompt.
+
+**Required behavior:**
+
+1. retain the local clone path as working-copy context;
+2. do not tell the user to clone the same repository again unless the supplied clone is unusable for the current task;
+3. do not assume the current agent can access the local filesystem merely because a path was supplied;
+4. keep GitHub authorization, local filesystem access, and local Git/GitHub authentication as separate capability checks;
+5. inspect local Git state before synchronization or destructive recovery when local access is available;
+6. do not make local tooling a kickoff requirement when the task can be completed through repository access alone.
+
 ## Pass criteria
 
 A framework revision passes the repository-mode regression suite when:
@@ -109,5 +122,6 @@ A framework revision passes the repository-mode regression suite when:
 - unfamiliar existing Power BI projects enter bounded read-only reconnaissance;
 - absence of Power BI Vibes metadata never by itself triggers scaffold installation;
 - repository write capability is not treated as authorization to restructure an existing project;
+- a supplied local clone is preserved as context without being mistaken for proof of local execution access;
 - the agent can support explain, debug, repair, extend, reverse engineer, refactor, validate, and migrate workflows without forcing a greenfield planning sequence;
 - privacy and validation boundaries remain intact.
