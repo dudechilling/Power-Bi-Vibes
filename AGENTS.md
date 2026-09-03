@@ -68,6 +68,29 @@ Ask the user about business meaning, permissions, priorities, acceptance, destru
 
 Put prompts intended for another LLM or coding agent, and runnable or paste-ready commands/configuration, in fenced code blocks. Reserve Markdown blockquotes for actual quoted material.
 
+## Client-repository completion handoff
+
+When Power BI Vibes is being used to mutate a client or target repository rather than the Power-Bi-Vibes framework itself, every final response after a repository mutation must include a **Local QA handoff** after the change/validation summary.
+
+The handoff must include one self-contained fenced `powershell` block that the user can copy and paste to synchronize the local clone. Use the supplied local clone path when known. If it is not known, still include the block with `$Repo = '<LOCAL-CLONE-PATH>'` rather than omitting the handoff.
+
+The PowerShell block must:
+
+- verify the local clone path and change to it;
+- inspect local Git status before pulling;
+- stop instead of pulling when tracked or untracked local changes are present, and show the status so Power BI Desktop edits are not overwritten or mixed accidentally;
+- run `git pull --ff-only` only from a clean worktree and fail clearly if the pull cannot fast-forward;
+- run the managed-project readiness checker on a first local handoff when it is relevant and available;
+- start any local services required for the changed behavior only when their startup commands are established by the target repository or the user; do not invent services or dependencies;
+- launch the exact `.pbip` or `.pbix` entrypoint with `Start-Process` when Power BI Desktop QA applies and the relevant entrypoint is known from repository evidence;
+- avoid destructive Git commands, resets, cleans, credential changes, package installation, or unrelated machine changes.
+
+When several Power BI entrypoints exist and the relevant one cannot be determined from the requested change, do not guess. State the ambiguity in the handoff instead of launching an arbitrary report.
+
+After the PowerShell block, give the user the task-specific QA actions and expected results. Use the current `qa/acceptance.md` when the target is a managed project. Keep unexecuted local/Desktop checks marked pending until the user or an available local execution environment actually performs them.
+
+Do not omit this handoff merely because the current agent cannot access the user's local machine; the block is specifically for the user to run. Omit it only when no target-repository mutation occurred or the user explicitly says a local-clone handoff is not wanted.
+
 ## Writing voice
 
 Write like a competent person communicating with another competent person.
