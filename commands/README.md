@@ -18,6 +18,10 @@ Examples:
 /data-savant our current source schema
 ```
 
+```text
+/repo-recon this existing Power BI repository
+```
+
 ## Command rules
 
 - Commands are user-invoked. Do not run them automatically unless the user asks for the same analysis in ordinary language.
@@ -25,9 +29,10 @@ Examples:
 - Text after the trigger is the target/scope. If no target is supplied, use the current request and relevant project state.
 - Analysis commands are non-mutating by default. Do not edit the project, change the accepted specification, or commit recommendations merely because a command was invoked.
 - After returning the analysis, wait for the user to choose what to implement.
-- Commands do not override privacy, security, evidence, Git, QA, or validation rules elsewhere in Power BI Vibes.
+- Commands do not override privacy, security, evidence, Git, QA, repository-mode, or validation rules elsewhere in Power BI Vibes.
 - Read only the project artifacts needed for the command. Do not turn a focused command into a full repository audit unless its purpose requires one.
 - Distinguish supported findings from inference and unknowns when that distinction affects the recommendation.
+- `/repo-recon` is an explicit reconnaissance lens. It does not replace the automatic Repository Mode Gate required by `BOOTSTRAP.md`.
 
 ## Available commands
 
@@ -40,6 +45,7 @@ Examples:
 | `/stress-test` | Try to break the current idea, specification, model, report, or workflow with realistic failure modes. |
 | `/simplify` | Identify complexity that can be removed, deferred, or consolidated while preserving the user's actual job. |
 | `/what-next` | Identify the highest-value next decision, test, or validation step from the current project state. |
+| `/repo-recon` | Perform non-mutating architectural reconnaissance of an existing Power BI repository before debugging, repair, extension, reverse engineering, refactoring, validation, or migration. |
 
 ## Dispatch
 
