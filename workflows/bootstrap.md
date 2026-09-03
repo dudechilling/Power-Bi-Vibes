@@ -171,6 +171,10 @@ Do not force local setup at kickoff. When Desktop or local file access becomes n
 
 Confirm current Power BI Desktop requirements for the exact PBIP/PBIR format before the first local open.
 
+After any client-repository mutation, the final response must also follow the **Local QA handoff** contract in root `AGENTS.md` and `policy/qa.md`: provide a copy/paste PowerShell block that safely checks local Git state, pulls with `--ff-only`, starts only repo-established services when applicable, and launches the exact relevant Power BI entrypoint when known. Then provide task-specific QA actions and expected results.
+
+This handoff is required even when the current agent cannot execute commands on the user's computer; it is the user's bridge from GitHub changes to local QA. Do not treat generating the block as evidence that the QA ran.
+
 ## 15. Production-data smoke test
 
 After safe/synthetic QA passes, switch to the approved real source locally, refresh, verify schema compatibility, relationships, important measures, performance, and source-specific edge cases. Record only sanitized failures when production details cannot be shared.
