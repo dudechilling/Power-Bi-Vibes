@@ -2,11 +2,18 @@
 
 ## Unreleased
 
-Brownfield repository reconnaissance and bootstrap hardening.
+Brownfield repository reconnaissance, agent hygiene, and bootstrap hardening.
 
 - Added a mandatory Repository Mode Gate to classify target repositories as `greenfield`, `managed-existing`, `brownfield-powerbi`, or `unknown-existing` before scaffolding or substantive mutation.
 - Added bounded read-only brownfield reconnaissance for unfamiliar existing Power BI repositories, including PBIP/PBIR/TMDL structure, report and semantic-model boundaries, source architecture, validation tooling, and project conventions.
 - Added an explicit mutation boundary: repository write capability does not imply permission to initialize, restructure, clean up, or install Power BI Vibes scaffolding into an existing implementation.
+- Added repository-hygiene rules with a default budget of zero new documentation/meta-artifact files per task, plus explicit prohibitions on ad hoc summaries, handoff packages, session notes, work logs, scratch Markdown, generated TODO/checklist files, completion manifests, backup copies, and duplicate `final`/`revised`/`v2` variants.
+- Preserved Power BI Vibes' established durable project artifacts as explicit exceptions to the zero-new-meta-file default, with instructions to update canonical artifacts in place rather than creating parallel documentation.
+- Added end-of-task change hygiene requiring agents to inspect Git/diff state when available, identify created files, remove unnecessary agent-created files, preserve pre-existing untracked files, and explain any new files that remain.
+- Added scope-discipline rules that keep documentation, cleanup, refactoring, research, packaging, framework adoption, and future-work artifacts out of scope unless required by the requested work.
+- Added communication rules that keep transient plans, progress, and findings in the conversation unless the user requests a file or an established durable project artifact must be updated.
+- Added writing-voice rules for plain contemporary English, direct openings, restrained structure, specific uncertainty, natural contractions, and avoidance of canned assistant phrasing, generic closings, mechanical prose, rhetorical transitions, fake familiarity, and habitual AI vocabulary when simpler precise wording is available.
+- Propagated repository hygiene, scope discipline, communication, and writing-voice governance into the client `AGENTS.md` template.
 - Added `/repo-recon` as an optional non-mutating command for explicit architectural mapping of an unfamiliar Power BI repository. The command complements rather than replaces automatic repository classification.
 - Updated bootstrap sequencing so greenfield projects retain the job-first workflow while brownfield projects inspect the existing implementation before generic product-discovery questions.
 - Updated the canonical bootstrap prompt from a greenfield-only "build a Power BI tool" framing to a neutral "work on a Power BI project" framing.
