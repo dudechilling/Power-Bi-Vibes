@@ -3,12 +3,12 @@
 Use this checklist before changing `VERSION` or publishing a framework release.
 
 - check links and pinned upstream references;
-- run `scripts/inspect-source.ps1` against representative CSV/XLSX fixtures and, when available, SQLite;
-- syntax-check and exercise the client local-readiness script on Windows before claiming its detection behavior is fully verified;
-- review the bootstrap workflow for privacy regressions and premature Power-BI-specific scaffolding;
+- run `tools/inspect-source.ps1` against representative CSV/XLSX fixtures and, when available, SQLite;
+- syntax-check and exercise `templates/client/scripts/check-local-setup.ps1` on Windows before claiming its detection behavior is fully verified;
+- review `workflows/bootstrap.md` for privacy regressions and premature Power-BI-specific scaffolding;
 - run the repository-mode evaluation cases in `maintainer/evals/repository-modes.md`, including a representative foreign brownfield repository containing existing Power BI assets;
 - confirm a brownfield bootstrap performs read-only reconnaissance before mutation and does not install Power BI Vibes scaffolding merely because framework metadata is absent;
-- confirm the canonical bootstrap prompt is aligned across `prompts/BOOTSTRAP.txt`, `README.md`, `docs/getting-started.md`, and the generated human guide source;
+- confirm the canonical bootstrap prompt is aligned across `prompts/BOOTSTRAP.txt`, `README.md`, and `docs/getting-started.md`;
 - confirm a supplied local clone is not treated as proof of local filesystem access or local Git authentication;
 - confirm client templates include the current learning, source-parameter, capability, Git-recovery, `.gitattributes`, acceptance, and local-readiness contracts;
 - confirm `docs/github-setup.md` still matches GitHub's current repository creation workflow;
