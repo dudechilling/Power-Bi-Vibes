@@ -35,6 +35,7 @@ REQUIRED = [
     "tools/build-guide.py",
     "tools/repo-integrity.py",
     "tools/inspect-source.ps1",
+    "tools/test-inspect-source.ps1",
     "tools/claude-artifact-guard.ps1",
     "prompts/BOOTSTRAP.txt",
     "prompts/RESUME.txt",
