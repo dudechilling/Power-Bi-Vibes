@@ -1,0 +1,37 @@
+power_bi_vibes:
+  version: <POWER-BI-VIBES-VERSION>
+  source: https://github.com/dudechilling/Power-Bi-Vibes
+
+microsoft_powerbi_authoring:
+  repository: https://github.com/microsoft/skills-for-fabric
+  component_path: plugins/powerbi-authoring
+  version: <MICROSOFT-POWERBI-VERSION>
+  commit: <MICROSOFT-POWERBI-COMMIT>
+  local_materialization: null
+
+project:
+  initialized: <YYYY-MM-DD>
+  development_data_mode: synthetic
+  deviations: []
+
+capabilities:
+  github_read: <true|false|unknown>
+  github_write: <true|false|unknown>
+  local_command_execution: <true|false|unknown>
+  local_git_available: <true|false|unknown>
+  local_github_read: <true|false|unknown>
+  local_github_push: <true|false|unknown>
+  powerbi_desktop_control: <true|false|unknown>
+  structural_validation: pending
+  visual_validation: pending
+
+local_setup:
+  checked: false
+  checked_on: null
+  preferred_clone_root: C:\PBI
+  transport: https
+  credential_manager: unknown
+
+powerbi_desktop:
+  required_version: <current project requirement or null>
+  required_preview_features: []
