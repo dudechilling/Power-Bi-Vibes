@@ -1,64 +1,69 @@
 # Power BI Vibes
 
-**Build useful Power BI tools with ChatGPT, GitHub, and privacy-safe development data.**
+**Build, understand, debug, repair, extend, and maintain useful Power BI tools with ChatGPT, GitHub, and privacy-safe development data.**
 
 Power BI Vibes is a public, machine-readable workflow for people who understand their work but do not need to understand DAX, TMDL, PBIR, Power Query, or Git internals.
 
+It supports two primary starting conditions:
+
+- **new project** - a greenfield repository that Power BI Vibes can initialize after understanding the job and confirming Power BI fit;
+- **existing project** - a substantive Power BI repository that must be classified and inspected read-only before any mutation.
+
 The basic pattern is:
 
-1. Create a **private** GitHub repository for your project and initialize it with a README.
-2. Connect GitHub to ChatGPT with permission to read and write that repository.
-3. Give ChatGPT this repository and your private project repository.
-4. Tell ChatGPT to read [`BOOTSTRAP.md`](BOOTSTRAP.md).
-5. Describe the job before ChatGPT creates a Power-BI-specific scaffold.
-6. Provide only data you are permitted to share. For restricted operational data, provide a scrubbed/template file or a locally generated schema report.
-7. ChatGPT creates the project in GitHub using deterministic synthetic data and a swappable source parameter.
-8. Use optional Power BI Vibes analytical commands when you want to challenge framing, surface blind spots, mine the data for overlooked value, stress-test the design, simplify it, or decide what to do next.
-9. When local QA becomes necessary, prepare the Windows machine with Git for Windows and Power BI Desktop, authenticate local Git separately from ChatGPT, and clone the private repository.
+1. Give ChatGPT this framework repository and the project repository.
+2. Tell ChatGPT to read [`BOOTSTRAP.md`](BOOTSTRAP.md).
+3. ChatGPT inspects the target first and runs the Repository Mode Gate: `greenfield`, `managed-existing`, `brownfield-powerbi`, or `unknown-existing`.
+4. For greenfield work, describe the job before ChatGPT creates a Power-BI-specific scaffold.
+5. For brownfield work, ChatGPT maps the existing implementation before debugging, repairing, extending, reverse engineering, refactoring, validating, or migrating it.
+6. Provide only data you are permitted to share. For restricted operational data, use existing permitted repository structure, a scrubbed/template file, or a locally generated schema report.
+7. Power BI Vibes-managed projects use deterministic synthetic data and swappable source boundaries. Existing repositories keep their established source/test conventions unless the requested work justifies changing them.
+8. Use optional Power BI Vibes analytical commands when you want to challenge framing, surface blind spots, mine the data for overlooked value, stress-test the design, simplify it, decide what to do next, or explicitly map an unfamiliar repository.
+9. When local QA becomes necessary, prepare the Windows machine with Git for Windows and Power BI Desktop, authenticate local Git separately from ChatGPT, and clone the project.
 10. Structural validation and Power BI Desktop rendering are treated as separate checks: ChatGPT only claims them when the required tooling actually ran.
-11. You connect the real operational source locally and perform the production-data smoke test on your own machine.
-12. The project records durable lessons so later agent sessions do not have to rediscover the same implementation knowledge.
+11. Connect the real operational source locally when appropriate and perform the production-data smoke test on your own machine.
+12. Power BI Vibes-managed projects record durable lessons so later agent sessions do not have to rediscover the same implementation knowledge.
 
 ## Start here
 
 For a nontechnical walkthrough, read [`START-HERE.md`](START-HERE.md) or the PDF guide in [`docs/Power-BI-Vibes-Guide.pdf`](docs/Power-BI-Vibes-Guide.pdf).
 
-First-time setup guides:
+If you are starting a new project, [`docs/CREATE-PRIVATE-REPO.md`](docs/CREATE-PRIVATE-REPO.md) gives click-by-click GitHub setup. If you already have a Power BI repository, use that repository directly; do not create a blank replacement just to use the framework.
 
-- [`docs/CREATE-PRIVATE-REPO.md`](docs/CREATE-PRIVATE-REPO.md) - click-by-click private GitHub repository creation.
-- [`docs/WINDOWS-SETUP.md`](docs/WINDOWS-SETUP.md) - Git for Windows, Git identity, GitHub authentication, cloning, Power BI Desktop, and local readiness.
+Local setup guidance is in [`docs/WINDOWS-SETUP.md`](docs/WINDOWS-SETUP.md).
 
 ### Bootstrap prompt
 
 ```text
-I want to build a Power BI tool.
+I want to work on a Power BI project.
 
 Use this framework:
 https://github.com/dudechilling/Power-Bi-Vibes
 
-My private project repository is:
-<PASTE YOUR PRIVATE GITHUB REPOSITORY URL>
+My project repository is:
+<PASTE YOUR GITHUB REPOSITORY URL>
 
-Read BOOTSTRAP.md in Power-Bi-Vibes and follow it. Do not ask me to share operational data that I am not permitted to share.
+Read BOOTSTRAP.md in Power-Bi-Vibes and follow it.
+
+Inspect the project repository before assuming whether it is new, existing, or already managed by Power BI Vibes. Do not modify an existing implementation until you understand its current structure and my requested task.
+
+Do not ask me to share operational data that I am not permitted to share.
 ```
+
+## Repository modes
+
+`BOOTSTRAP.md` requires classification before scaffolding or mutation:
+
+- `greenfield` - empty, README-only, or intentionally blank repository;
+- `managed-existing` - existing Power BI Vibes-managed project;
+- `brownfield-powerbi` - substantive existing Power BI implementation without Power BI Vibes ownership;
+- `unknown-existing` - substantive repository whose relevant architecture or Power BI boundary is not yet clear.
+
+Brownfield and unknown repositories stay read-only during reconnaissance. Power BI Vibes must not install its scaffold merely because framework metadata is absent.
 
 ## Analytical commands
 
 Power BI Vibes includes optional command-style prompts under [`commands/`](commands/). These are framework conventions, not native ChatGPT slash commands. Start a message with a command trigger and optionally add a target.
-
-Examples:
-
-```text
-/premature-framing
-```
-
-```text
-/stress-test the forecasting logic
-```
-
-```text
-/data-savant our current source schema
-```
 
 Available commands:
 
@@ -69,6 +74,9 @@ Available commands:
 - `/stress-test` - try to break the current idea, model, report, or workflow with realistic failure modes.
 - `/simplify` - identify complexity that can be removed, deferred, consolidated, or automated.
 - `/what-next` - identify the highest-value next decision, test, or validation step.
+- `/repo-recon` - perform non-mutating architectural reconnaissance of an existing Power BI repository.
+
+`/repo-recon` is useful when you explicitly want a compact system map before debugging or changing an unfamiliar repository. It complements, but does not replace, the automatic Repository Mode Gate.
 
 These commands are **non-mutating by default**. They return analysis and recommendations; ChatGPT should wait for the user to choose what to implement before changing the project. See [`commands/README.md`](commands/README.md) and [`commands/registry.yml`](commands/registry.yml).
 
@@ -84,16 +92,16 @@ When ChatGPT gives the user material intended to be transferred into another too
 
 ## What this repository contains
 
-- `BOOTSTRAP.md` - the entrypoint ChatGPT follows when starting or resuming a client project.
+- `BOOTSTRAP.md` - the canonical entrypoint for classifying, starting, adopting, auditing, or resuming a client project.
 - `AGENTS.md` - rules for agents working on this framework itself.
-- `framework/` - durable operating rules for privacy, project structure, Git, data contracts, QA, learning, and Microsoft Power BI skill routing.
+- `framework/` - durable operating rules for privacy, repository mutation boundaries, project structure, Git, data contracts, QA, learning, and Microsoft Power BI skill routing.
 - `commands/` - optional user-invoked analytical lenses plus a machine-readable command registry.
-- `templates/` - files ChatGPT can install into a client project.
-- `scripts/check-local-setup.ps1` - read-only Windows/Git/GitHub/Power BI readiness checker copied into client projects.
+- `templates/` - files ChatGPT can install into a new or explicitly adopted Power BI Vibes client project.
+- `scripts/check-local-setup.ps1` - read-only Windows/Git/GitHub/Power BI readiness checker copied into managed client projects.
 - `scripts/inspect-source.ps1` - local metadata-only inspector for CSV, TSV, XLSX/XLSM, and SQLite sources.
 - `scripts/repo_integrity.py` - repository/document integrity checks used by CI.
 - `prompts/` - copy/paste bootstrap, resume, and update prompts.
-- `docs/CREATE-PRIVATE-REPO.md` - first-time GitHub repository setup.
+- `docs/CREATE-PRIVATE-REPO.md` - first-time GitHub repository setup for greenfield projects.
 - `docs/WINDOWS-SETUP.md` - first-time Windows/local Git setup.
 - `docs/Power-BI-Vibes-Guide.md` - canonical human guide source.
 - `docs/build_guide.py` - reproducible PDF builder for the human guide.
@@ -104,10 +112,13 @@ When ChatGPT gives the user material intended to be transferred into another too
 
 - **No production operational data in this public repository.**
 - **No production operational data in client GitHub repositories unless the client explicitly permits it.**
-- Develop with deterministic synthetic data that mirrors the real schema and important edge cases.
-- Treat schema, worksheet names, formulas, internal terminology, logs, and screenshots as potentially sensitive too.
-- Keep source locations behind a named Power Query parameter so synthetic and production sources can be swapped without rewriting downstream logic.
-- Keep the client repository on `main` during normal iterative work. Use a branch for substantial experiments that could destabilize an accepted working product.
+- **Classify substantive existing repositories before mutation.**
+- **Repository write capability is not permission to scaffold, restructure, or clean up an existing implementation.**
+- Develop with deterministic synthetic data when production values are restricted and the project needs fixtures.
+- Treat schema, worksheet names, formulas, internal terminology, logs, URLs, queries, and screenshots as potentially sensitive too.
+- Preserve existing source, Git, and validation conventions in brownfield repositories unless the requested change justifies altering them.
+- Keep source locations behind a named Power Query parameter in Power BI Vibes-managed projects so synthetic and production sources can be swapped without rewriting downstream logic.
+- Keep managed client repositories on `main` during normal iterative work. Use a branch for substantial experiments that could destabilize an accepted working product.
 - Treat ChatGPT GitHub authorization and the user's local GitHub authentication as separate capability checks.
 - Inspect local Git state before pulling over Power BI Desktop edits.
 - Validate structurally and visually before calling a Power BI change complete; mark unavailable checks as pending rather than pretending they ran.
@@ -116,7 +127,7 @@ When ChatGPT gives the user material intended to be transferred into another too
 
 ## Local dependency policy
 
-Do not make users install development tooling at project kickoff unless the current task needs it. ChatGPT can build the repository first. At the first local Power BI Desktop handoff, the normal required local stack is Power BI Desktop, Git for Windows, PowerShell, and browser-based GitHub authentication. GitHub CLI and GitHub Desktop are optional. SQLite CLI is required only for local SQLite schema inspection.
+Do not make users install development tooling at project kickoff unless the current task needs it. ChatGPT can work in the repository first. At the first local Power BI Desktop handoff, the normal required local stack is Power BI Desktop, Git for Windows, PowerShell, and browser-based GitHub authentication. GitHub CLI and GitHub Desktop are optional. SQLite CLI is required only for local SQLite schema inspection.
 
 ## Microsoft Power BI authoring dependency
 
@@ -124,8 +135,8 @@ Power BI Vibes currently targets Microsoft's `powerbi-authoring` plugin from `mi
 
 ## Integrity checks
 
-The repository carries a CI audit that checks required files, version consistency, relative links, YAML parsing, scaffold mappings, command registry/definition consistency, local-setup packaging, and the generated PDF. The PDF is built from committed Markdown and checked for valid structure and substantive content on every page before release.
+The repository carries a CI audit that checks required files, version consistency, relative links, YAML parsing, scaffold mappings, command registry/definition consistency, local-setup packaging, and the generated PDF. Repository-mode behavior is also documented through representative evaluation cases in [`docs/REPOSITORY-MODE-EVALS.md`](docs/REPOSITORY-MODE-EVALS.md).
 
 ## Status
 
-`v0.1.4` adds the first user-invoked analytical command suite and a copy/paste-first response convention for prompts, commands, code, and configuration. Command definitions are non-mutating by default and dispatched through a machine-readable registry.
+The current framework adds repository-mode classification, mandatory brownfield reconnaissance before mutation, and `/repo-recon` for explicit read-only mapping of unfamiliar Power BI repositories. Release/version metadata should only be advanced after the normal release checks and regenerated client guide complete successfully.
