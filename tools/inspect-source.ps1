@@ -127,7 +127,7 @@ function Get-XlsxRowProfile {
         }
     }
 
-    [ordered]@{
+    [pscustomobject][ordered]@{
         row = [int]$RowNode.GetAttribute('r')
         populated = $populated
         texts = $texts
