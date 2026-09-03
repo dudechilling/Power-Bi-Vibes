@@ -4,9 +4,12 @@ Use this framework:
 https://github.com/dudechilling/Power-Bi-Vibes
 
 My project repository is:
-<PASTE YOUR GITHUB REPOSITORY URL>
+<PASTE YOUR PRIVATE GITHUB REPOSITORY URL>
 
-Read BOOTSTRAP.md in Power-Bi-Vibes and follow it.
+My local clone is:
+<PASTE YOUR LOCAL PATH HERE>
+
+Read BOOTSTRAP.md and follow it.
 
 Inspect the project repository before assuming whether it is new, existing, or already managed by Power BI Vibes. Do not modify an existing implementation until you understand its current structure and my requested task.
 
