@@ -26,7 +26,8 @@ Repository authority, onboarding, agent hygiene, and brownfield hardening.
 - Added writing-voice rules for plain contemporary English, direct openings, restrained structure, specific uncertainty, natural contractions, and avoidance of canned assistant phrasing, generic closings, mechanical prose, rhetorical transitions, fake familiarity, and habitual AI vocabulary when simpler precise wording is available.
 - Added `/repo-recon` as an optional non-mutating command for explicit architectural mapping of an unfamiliar Power BI repository.
 - Added project repository and local clone fields to the bootstrap prompt. The local path is contextual and does not imply that the current agent has local filesystem access or authenticated local Git access.
-- The generated client PDF has not been regenerated or release-version metadata advanced as part of the branch restructure; those remain release-gate work.
+- Rebuilt and verified the generated client PDF through the Integrity workflow; repository audit, link/YAML/template checks, PDF preflight, and full-page Poppler rendering all passed.
+- Release-version metadata has not been advanced; that remains release-gate work.
 
 ## 0.1.4 - 2026-08-31
 
