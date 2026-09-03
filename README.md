@@ -19,7 +19,7 @@ The basic pattern is:
 6. Provide only data you are permitted to share. For restricted operational data, use existing permitted repository structure, a scrubbed/template file, or a locally generated schema report.
 7. Power BI Vibes-managed projects use deterministic synthetic data and swappable source boundaries. Existing repositories keep their established source/test conventions unless the requested work justifies changing them.
 8. Use optional Power BI Vibes analytical commands when you want to challenge framing, surface blind spots, mine the data for overlooked value, stress-test the design, simplify it, decide what to do next, or explicitly map an unfamiliar repository.
-9. When local QA becomes necessary, prepare the Windows machine with Git for Windows and Power BI Desktop, authenticate local Git separately from ChatGPT, and clone the project.
+9. When local QA becomes necessary, use the supplied local clone when one exists or prepare the Windows machine with Git for Windows and Power BI Desktop, authenticate local Git separately from ChatGPT, and clone the project.
 10. Structural validation and Power BI Desktop rendering are treated as separate checks: ChatGPT only claims them when the required tooling actually ran.
 11. Connect the real operational source locally when appropriate and perform the production-data smoke test on your own machine.
 12. Power BI Vibes-managed projects record durable lessons so later agent sessions do not have to rediscover the same implementation knowledge.
@@ -41,14 +41,19 @@ Use this framework:
 https://github.com/dudechilling/Power-Bi-Vibes
 
 My project repository is:
-<PASTE YOUR GITHUB REPOSITORY URL>
+<PASTE YOUR PRIVATE GITHUB REPOSITORY URL>
 
-Read BOOTSTRAP.md in Power-Bi-Vibes and follow it.
+My local clone is:
+<PASTE YOUR LOCAL PATH HERE>
+
+Read BOOTSTRAP.md and follow it.
 
 Inspect the project repository before assuming whether it is new, existing, or already managed by Power BI Vibes. Do not modify an existing implementation until you understand its current structure and my requested task.
 
 Do not ask me to share operational data that I am not permitted to share.
 ```
+
+If no local clone exists yet, replace the local-path placeholder with `not cloned yet`. A local path is context, not a requirement to use local tooling immediately.
 
 ## Repository modes
 
@@ -120,6 +125,7 @@ When ChatGPT gives the user material intended to be transferred into another too
 - Keep source locations behind a named Power Query parameter in Power BI Vibes-managed projects so synthetic and production sources can be swapped without rewriting downstream logic.
 - Keep managed client repositories on `main` during normal iterative work. Use a branch for substantial experiments that could destabilize an accepted working product.
 - Treat ChatGPT GitHub authorization and the user's local GitHub authentication as separate capability checks.
+- Treat a supplied local clone path as separate execution context from connected GitHub access; do not assume either one proves access to the other.
 - Inspect local Git state before pulling over Power BI Desktop edits.
 - Validate structurally and visually before calling a Power BI change complete; mark unavailable checks as pending rather than pretending they ran.
 - Treat analytical commands as advisory unless the user explicitly asks to implement their findings.
@@ -127,7 +133,7 @@ When ChatGPT gives the user material intended to be transferred into another too
 
 ## Local dependency policy
 
-Do not make users install development tooling at project kickoff unless the current task needs it. ChatGPT can work in the repository first. At the first local Power BI Desktop handoff, the normal required local stack is Power BI Desktop, Git for Windows, PowerShell, and browser-based GitHub authentication. GitHub CLI and GitHub Desktop are optional. SQLite CLI is required only for local SQLite schema inspection.
+Do not make users install development tooling at project kickoff unless the current task needs it. ChatGPT can work in the repository first. A supplied local clone path should be used when the current environment can access it and the task benefits from local inspection or execution; otherwise it remains contextual information. At the first local Power BI Desktop handoff, the normal required local stack is Power BI Desktop, Git for Windows, PowerShell, and browser-based GitHub authentication. GitHub CLI and GitHub Desktop are optional. SQLite CLI is required only for local SQLite schema inspection.
 
 ## Microsoft Power BI authoring dependency
 
@@ -139,4 +145,4 @@ The repository carries a CI audit that checks required files, version consistenc
 
 ## Status
 
-The current framework adds repository-mode classification, mandatory brownfield reconnaissance before mutation, and `/repo-recon` for explicit read-only mapping of unfamiliar Power BI repositories. Release/version metadata should only be advanced after the normal release checks and regenerated client guide complete successfully.
+The current framework adds repository-mode classification, mandatory brownfield reconnaissance before mutation, local-clone context in the bootstrap prompt, and `/repo-recon` for explicit read-only mapping of unfamiliar Power BI repositories. Release/version metadata should only be advanced after the normal release checks and regenerated client guide complete successfully.
