@@ -1,9 +1,13 @@
-I want to build a Power BI tool.
+I want to work on a Power BI project.
 
 Use this framework:
 https://github.com/dudechilling/Power-Bi-Vibes
 
-My private project repository is:
-<PASTE YOUR PRIVATE GITHUB REPOSITORY URL>
+My project repository is:
+<PASTE YOUR GITHUB REPOSITORY URL>
 
-Read BOOTSTRAP.md in Power-Bi-Vibes and follow it. Do not ask me to share operational data that I am not permitted to share.
+Read BOOTSTRAP.md in Power-Bi-Vibes and follow it.
+
+Inspect the project repository before assuming whether it is new, existing, or already managed by Power BI Vibes. Do not modify an existing implementation until you understand its current structure and my requested task.
+
+Do not ask me to share operational data that I am not permitted to share.
