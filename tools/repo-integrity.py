@@ -152,6 +152,21 @@ def check_policy_routing() -> None:
         fail("client CLAUDE.md is not a thin @AGENTS.md wrapper")
 
 
+def check_local_qa_handoff_contract() -> None:
+    required_phrases = {
+        "AGENTS.md": ["Client-repository completion handoff", "Local QA handoff", "git pull --ff-only", "Start-Process"],
+        "templates/client/AGENTS.md": ["Local QA handoff after changes", "git pull --ff-only", "Start-Process"],
+        "policy/qa.md": ["Local QA handoff", "git pull --ff-only", "Start-Process"],
+        "workflows/bootstrap.md": ["Local QA handoff", "copy/paste PowerShell block"],
+        "docs/getting-started.md": ["Local QA handoff", "git pull --ff-only"],
+    }
+    for rel, phrases in required_phrases.items():
+        text = (ROOT / rel).read_text(encoding="utf-8")
+        for phrase in phrases:
+            if phrase not in text:
+                fail(f"{rel}: missing local QA handoff contract phrase: {phrase}")
+
+
 def command_output(args: list[str]) -> str | None:
     try:
         result = subprocess.run(args, cwd=ROOT, check=True, text=True, capture_output=True)
@@ -205,6 +220,7 @@ def main() -> int:
     check_yaml()
     check_template_mirror()
     check_policy_routing()
+    check_local_qa_handoff_contract()
     check_no_superseded_paths()
     check_pdf()
     if failures:
