@@ -1,5 +1,23 @@
 # Changelog
 
+## Unreleased
+
+Brownfield repository reconnaissance and bootstrap hardening.
+
+- Added a mandatory Repository Mode Gate to classify target repositories as `greenfield`, `managed-existing`, `brownfield-powerbi`, or `unknown-existing` before scaffolding or substantive mutation.
+- Added bounded read-only brownfield reconnaissance for unfamiliar existing Power BI repositories, including PBIP/PBIR/TMDL structure, report and semantic-model boundaries, source architecture, validation tooling, and project conventions.
+- Added an explicit mutation boundary: repository write capability does not imply permission to initialize, restructure, clean up, or install Power BI Vibes scaffolding into an existing implementation.
+- Added `/repo-recon` as an optional non-mutating command for explicit architectural mapping of an unfamiliar Power BI repository. The command complements rather than replaces automatic repository classification.
+- Updated bootstrap sequencing so greenfield projects retain the job-first workflow while brownfield projects inspect the existing implementation before generic product-discovery questions.
+- Updated the canonical bootstrap prompt from a greenfield-only "build a Power BI tool" framing to a neutral "work on a Power BI project" framing.
+- Added project repository and local clone fields to the bootstrap prompt. The local path is contextual and does not imply that the current agent has local filesystem access or authenticated local Git access.
+- Updated onboarding guidance to support both new repositories and existing Power BI repositories without requiring users to create a blank replacement repository.
+- Added repository-mode behavioral evaluation cases covering README-only greenfield repos, existing PBIP/PBIR/TMDL projects, managed Power BI Vibes projects, mixed software repositories, explicit read-only work, restricted-data scenarios, and supplied local clones.
+- Updated framework release checks so brownfield behavior, prompt alignment, local-clone capability separation, and no-scaffold-before-reconnaissance behavior must be reviewed before release.
+- Updated core operating rules and framework agent guidance to preserve established brownfield architecture and keep GitHub authorization, local filesystem access, and local Git/GitHub authentication as separate capabilities.
+- Updated README and START-HERE documentation to describe repository modes, brownfield behavior, `/repo-recon`, and local-clone handling.
+- The generated client PDF has not been regenerated or release-version metadata advanced as part of these source changes; those remain release-gate work.
+
 ## 0.1.4 - 2026-08-31
 
 User-invoked analytical command and response-formatting pass.
